@@ -2,8 +2,12 @@
 
 namespace App\Controller;
 
+use App\Entity\Players;
+use App\Form\PlayerType;
 use App\Repository\PlayersRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
@@ -29,11 +33,28 @@ final class PlayersController extends AbstractController
     }
 
     // Endpoint pour créer un joueur
-    #[Route('/new/{id}', name: 'player_new')]
-    public function new()
+    #[Route('/new/', name: 'player_new')]
+    public function new(Request $request, EntityManagerInterface $em): Response
 
     {
-        dd('new');
+        $newPlayer = new Players();
+
+        $formPlayer = $this->createForm(PlayerType::class, $newPlayer);
+        $formPlayer->handleRequest($request);
+
+        if ($formPlayer->isSubmitted() && $formPlayer->isValid())
+        
+        {
+            $em->persist($newPlayer);
+            $em->flush();
+
+            return $this->redirectToRoute('player_show', ['id' => $newPlayer->getId()]);
+        }
+
+        return $this->render('players/new.html.twig', [
+            'formPlayer' => $formPlayer,
+        ]);
+
     }
 
     // Endpoint pour mettre à jour un joueur

@@ -28,8 +28,8 @@ class Players
     #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
     private ?\DateTime $birthdate = null;
 
-    #[ORM\Column(type: Types::SIMPLE_ARRAY, enumType: PlayerStatut::class)]
-    private array $statut = [];
+    #[ORM\Column(enumType: PlayerStatut::class)]
+    private ?PlayerStatut $statut = null;
 
     #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $licence = null;
@@ -38,7 +38,10 @@ class Players
     private ?\DateTime $medical_certificate = null;
 
     #[ORM\Column(enumType: PlayerCategorie::class)]
-    private ?PlayerCategorie $catagorie = null;
+    private ?PlayerCategorie $categorie = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $number = null;
 
     public function getId(): ?int
     {
@@ -96,12 +99,12 @@ class Players
     /**
      * @return PlayerStatut[]
      */
-    public function getStatut(): array
+    public function getStatut()
     {
         return $this->statut;
     }
 
-    public function setStatut(array $statut): static
+    public function setStatut($statut): static
     {
         $this->statut = $statut;
 
@@ -132,15 +135,28 @@ class Players
         return $this;
     }
 
-    public function getCatagorie(): ?PlayerCategorie
+    public function getCategorie(): ?PlayerCategorie
     {
-        return $this->catagorie;
+        return $this->categorie;
     }
 
-    public function setCatagorie(PlayerCategorie $catagorie): static
+    public function setCategorie(PlayerCategorie $categorie): static
     {
-        $this->catagorie = $catagorie;
+        $this->categorie = $categorie;
 
         return $this;
     }
+
+    public function getNumber(): ?int
+    {
+        return $this->number;
+    }
+
+    public function setNumber(?int $number): static
+    {
+        $this->number = $number;
+
+        return $this;
+    }
+
 }

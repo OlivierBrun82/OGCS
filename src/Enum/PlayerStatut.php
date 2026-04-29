@@ -4,7 +4,8 @@ namespace App\Enum;
 
 enum PlayerStatut: string
     {
-        case Injuried = 'injuried';
+        case Valide = 'valide';
+        case Blessé = 'injuried';
         case Absent = 'absent';
-        case Suspended = 'suspended';
+        case Suspendu = 'suspended';
     }

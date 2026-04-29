@@ -1,20 +1,21 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Hello PlayersController!{% endblock %}
+{% block title %}Page des joueurs{% endblock %}
 
 {% block body %}
-<style>
-    .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
-    .example-wrapper code { background: #F5F5F5; padding: 2px 6px; }
-</style>
-
-<div class="example-wrapper">
-    <h1>Hello {{ controller_name }}! ✅</h1>
-
-    This friendly message is coming from:
-    <ul>
-        <li>Your controller at <code>/home/ceryx/Dev/Exo/symfony/OGCS/OGCS/src/Controller/PlayersController.php</code></li>
-        <li>Your template at <code>/home/ceryx/Dev/Exo/symfony/OGCS/OGCS/templates/players/index.html.twig</code></li>
-    </ul>
-</div>
+    <h1>Page des joueurs</h1>
+{% for players in players %}
+    <article>
+        <h2>{{players.firstname}} {{players.lastname}}</h2>
+        <span>{{players.number}}</span>
+        <a href="{{ path ('player_show', {id : players.id})}}">Voir le {{players.firstname}} {{players.lastname}}</a>
+        <a href="{{path ('player_update', {id : players.id})}}">Modifier le {{players.firstname}} {{players.lastname}}</a>
+        <form action="{{path ('player_delete', {id : players.id})}}" method="POST">
+            <input type="hidden" name="_token" value="{{csrf_token('delete' ~ players.id)}}">
+            <button type="submit" class="btn btn-danger">Supprimer le {{players.firstname}} {{players.lastname}}</button>
+        </form>
+    </article>
+{% endfor %}
+<br>
+<a href="{{ path ('player_new')}}">Créer un joueur</a>
 {% endblock %}

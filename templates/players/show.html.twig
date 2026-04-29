@@ -1,0 +1,17 @@
+<article>
+    <span>
+        Prénom : {{players.firstname}} <br>
+        Nom : {{players.lastname}} <br>
+        Statut : {{players.statut.value}} <br>
+        Licence : {{players.licence|date('d/m/Y')}} <br>
+        Email : {{players.email}} <br>
+        Date de naissance : {{players.birthdate|date("d/m/Y")}} <br>
+        Maillot numéro : {{players.number}}</span> <br>
+
+    {# <form action="{{path('player_delete', { id : players.id})}}" method="POST"> #}
+    {# <input type="hidden" name="_token" value={{csrf_token('delete' ~ player.id)}}>
+    <button type="submit">supression du joueur</button> #}
+    </form>
+    <a href="{{path('players_index')}}">Retourner à l'index</a>
+
+</article>

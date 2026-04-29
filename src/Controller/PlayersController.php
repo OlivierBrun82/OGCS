@@ -20,16 +20,18 @@ final class PlayersController extends AbstractController
 
     {
         return $this->render('players/index.html.twig', [
-            'Players' => $playersRepository,
+            'players' => $playersRepository->findAll(),
         ]);
     }
 
     // Endpoint pour afficher un joueur par sont id en GET
     #[Route('/show/{id}', name: 'player_show')]
-    public function show()
+    public function show(Players $players)
 
     {
-        dd('show 1');
+        return $this->render('/players/show.html.twig', [
+            'players' => $players
+        ]);
     }
 
     // Endpoint pour créer un joueur
@@ -58,19 +60,36 @@ final class PlayersController extends AbstractController
     }
 
     // Endpoint pour mettre à jour un joueur
-    #[Route('/update/{id}', name: 'player_update')]
-    public function update()
+    #[Route('/update/{id}', name: 'player_update', methods: ['GET', 'POST'])]
+    public function update(Players $players, Request $request, EntityManagerInterface $em): Response
 
     {
-        dd('update');
+        $formPlayer = $this->createForm(PlayerType::class, $players);
+        $formPlayer->handleRequest($request);
+
+        if ($formPlayer->isSubmitted() && $formPlayer->isValid())
+        {
+            $em->flush();
+            return $this->redirectToRoute('player_show', ['id' => $players->getId()]);
+        }
+
+        return $this->render('players/update.html.twig', [
+            'formPlayer' => $formPlayer,
+        ]);
     }
 
     // Endpoint pour supprimer un joueur
-    #[Route('/delete/{id}', name: 'player_delete')]
-    public function delete()
+    #[Route('/delete/{id}', name: 'player_delete', methods: ['POST'])]
+    public function delete(Players $players, Request $request, EntityManagerInterface $em): Response
 
     {
-        dd('delete');
+        if ($this->isCsrfTokenValid('delete' . $players->getId(), $request->request->get('_token')))
+        {
+            $em->remove($players);
+            $em->flush();
+            return $this->redirectToRoute('players_index');
+        }
+
     }
 
 }

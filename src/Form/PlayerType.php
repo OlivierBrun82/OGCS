@@ -62,7 +62,7 @@ class PlayerType extends AbstractType
                 ]
             ])
             ->add('submit', SubmitType::class, [
-                'label' => 'Créer le joueur',
+                'label' => 'Envoyer',
                 'attr' => [
                     'class' => 'btn btn-primary'
                 ]

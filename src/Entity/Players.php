@@ -5,6 +5,8 @@ namespace App\Entity;
 use App\Enum\PlayerCategorie;
 use App\Enum\PlayerStatut;
 use App\Repository\PlayersRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -42,6 +44,34 @@ class Players
 
     #[ORM\Column(nullable: true)]
     private ?int $number = null;
+
+    #[ORM\ManyToOne(inversedBy: 'players')]
+    private ?Teams $Teams = null;
+
+    /**
+     * @var Collection<int, Ratings>
+     */
+    #[ORM\ManyToMany(targetEntity: Ratings::class, inversedBy: 'players')]
+    private Collection $Ratings;
+
+    /**
+     * @var Collection<int, Abscences>
+     */
+    #[ORM\OneToMany(targetEntity: Abscences::class, mappedBy: 'players')]
+    private Collection $relation;
+
+    /**
+     * @var Collection<int, Blames>
+     */
+    #[ORM\OneToMany(targetEntity: Blames::class, mappedBy: 'players')]
+    private Collection $Blames;
+
+    public function __construct()
+    {
+        $this->Ratings = new ArrayCollection();
+        $this->relation = new ArrayCollection();
+        $this->Blames = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -155,6 +185,102 @@ class Players
     public function setNumber(?int $number): static
     {
         $this->number = $number;
+
+        return $this;
+    }
+
+    public function getTeams(): ?Teams
+    {
+        return $this->Teams;
+    }
+
+    public function setTeams(?Teams $Teams): static
+    {
+        $this->Teams = $Teams;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Ratings>
+     */
+    public function getRatings(): Collection
+    {
+        return $this->Ratings;
+    }
+
+    public function addRating(Ratings $rating): static
+    {
+        if (!$this->Ratings->contains($rating)) {
+            $this->Ratings->add($rating);
+        }
+
+        return $this;
+    }
+
+    public function removeRating(Ratings $rating): static
+    {
+        $this->Ratings->removeElement($rating);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Abscences>
+     */
+    public function getRelation(): Collection
+    {
+        return $this->relation;
+    }
+
+    public function addRelation(Abscences $relation): static
+    {
+        if (!$this->relation->contains($relation)) {
+            $this->relation->add($relation);
+            $relation->setPlayers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeRelation(Abscences $relation): static
+    {
+        if ($this->relation->removeElement($relation)) {
+            // set the owning side to null (unless already changed)
+            if ($relation->getPlayers() === $this) {
+                $relation->setPlayers(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Blames>
+     */
+    public function getBlames(): Collection
+    {
+        return $this->Blames;
+    }
+
+    public function addBlame(Blames $blame): static
+    {
+        if (!$this->Blames->contains($blame)) {
+            $this->Blames->add($blame);
+            $blame->setPlayers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBlame(Blames $blame): static
+    {
+        if ($this->Blames->removeElement($blame)) {
+            // set the owning side to null (unless already changed)
+            if ($blame->getPlayers() === $this) {
+                $blame->setPlayers(null);
+            }
+        }
 
         return $this;
     }

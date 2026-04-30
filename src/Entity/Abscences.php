@@ -22,6 +22,12 @@ class Abscences
     #[ORM\Column]
     private ?\DateTimeImmutable $updated_at = null;
 
+    #[ORM\ManyToOne(inversedBy: 'relation')]
+    private ?Players $players = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Abscences')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -59,6 +65,30 @@ class Abscences
     public function setUpdatedAt(\DateTimeImmutable $updated_at): static
     {
         $this->updated_at = $updated_at;
+
+        return $this;
+    }
+
+    public function getPlayers(): ?Players
+    {
+        return $this->players;
+    }
+
+    public function setPlayers(?Players $players): static
+    {
+        $this->players = $players;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

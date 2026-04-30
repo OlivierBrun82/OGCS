@@ -26,6 +26,12 @@ class Blames
     #[ORM\Column(nullable: true)]
     private ?\DateTime $red_card = null;
 
+    #[ORM\ManyToOne(inversedBy: 'Blames')]
+    private ?Players $players = null;
+
+    #[ORM\ManyToOne(inversedBy: 'Blames')]
+    private ?User $user = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -75,6 +81,30 @@ class Blames
     public function setRedCard(?\DateTime $red_card): static
     {
         $this->red_card = $red_card;
+
+        return $this;
+    }
+
+    public function getPlayers(): ?Players
+    {
+        return $this->players;
+    }
+
+    public function setPlayers(?Players $players): static
+    {
+        $this->players = $players;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): static
+    {
+        $this->user = $user;
 
         return $this;
     }

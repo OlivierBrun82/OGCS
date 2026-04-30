@@ -3,12 +3,14 @@
 namespace App\Form;
 
 use App\Entity\Players;
+use App\Entity\Teams;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\NumberType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 
 class PlayerType extends AbstractType
@@ -54,13 +56,20 @@ class PlayerType extends AbstractType
             ->add('medical_certificate')
             ->add('categorie')
             ->add('statut')
-            ->add('number', NumberType::class, [
+            ->add('number', IntegerType::class, [
                 'label' => 'Le numéro du joueur : ',
                 'required' => true,
                 'attr' => [
                     'placeholder' => 'Entrer le numéro du joueur',
                 ]
             ])
+            ->add('teams', EntityType::class, [
+                'class' => Teams::class,
+                'label' => 'L\'équipe du joueur : ',
+                'required' => true,
+                'choice_label' => 'team_name',
+                'placeholder' => 'Choisir une équipe',
+            ])  
             ->add('submit', SubmitType::class, [
                 'label' => 'Envoyer',
                 'attr' => [

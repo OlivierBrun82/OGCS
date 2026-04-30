@@ -8,6 +8,7 @@
     <article>
         <h2>{{players.firstname}} {{players.lastname}}</h2>
         <span>{{players.number}}</span>
+        <span>{{players.teams.team_name}}</span>
         <a href="{{ path ('player_show', {id : players.id})}}">Voir le {{players.firstname}} {{players.lastname}}</a>
         <a href="{{path ('player_update', {id : players.id})}}">Modifier le {{players.firstname}} {{players.lastname}}</a>
         <form action="{{path ('player_delete', {id : players.id})}}" method="POST">

@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Message{% endblock %}
+
+{% block body %}
+    <h1>Message</h1>
+
+    {{ include('messages/_nav.html.twig') }}
+
+    <dl class="row">
+        <dt class="col-sm-3">De</dt>
+        <dd class="col-sm-9">{{ message.sender.email }}</dd>
+        <dt class="col-sm-3">À</dt>
+        <dd class="col-sm-9">{{ message.recipient.email }}</dd>
+        <dt class="col-sm-3">Envoyé le</dt>
+        <dd class="col-sm-9">{{ message.sentAt|date('d/m/Y H:i') }}</dd>
+        <dt class="col-sm-3">Lu</dt>
+        <dd class="col-sm-9">{{ message.readAt ? message.readAt|date('d/m/Y H:i') : 'Pas encore lu' }}</dd>
+    </dl>
+
+    <div class="border rounded p-3 mb-3" style="white-space: pre-wrap;">{{ message.message }}</div>
+
+    <p>
+        {% if message.recipient.id == app.user.id %}
+            <a href="{{ path('app_messages_inbox') }}">Retour à la réception</a>
+        {% else %}
+            <a href="{{ path('app_messages_sent') }}">Retour aux envoyés</a>
+        {% endif %}
+    </p>
+{% endblock %}

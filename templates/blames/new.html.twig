@@ -1,0 +1,11 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ajouter un carton à un joueur{% endblock %}
+
+{% block body %}
+    <h1>Ajouter un carton à un joueur</h1>
+
+    {{ include('blames/_form.html.twig') }}
+
+    <a href="{{ path('app_blames_index') }}">Retour à la liste des cartons</a>
+{% endblock %}

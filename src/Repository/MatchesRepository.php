@@ -16,6 +16,18 @@ class MatchesRepository extends ServiceEntityRepository
         parent::__construct($registry, Matches::class);
     }
 
+    /**
+     * @return list<Matches>
+     */
+    public function findAllRecentFirst(): array
+    {
+        return $this->createQueryBuilder('m')
+            ->orderBy('m.date', 'DESC')
+            ->addOrderBy('m.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
 //    /**
 //     * @return Matches[] Returns an array of Matches objects
 //     */

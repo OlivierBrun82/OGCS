@@ -1,0 +1,60 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Carton{% endblock %}
+
+{% block body %}
+    <h1>Carton</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ blame.id }}</td>
+            </tr>
+            <tr>
+                <th>Date de début (attribution)</th>
+                <td>{{ blame.startDate ? blame.startDate|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ blame.cardType ? blame.cardType.label : '' }}</td>
+            </tr>
+            <tr>
+                <th>Durée (minutes)</th>
+                <td>{{ blame.durationMinutes is not null ? blame.durationMinutes ~ ' min' : '—' }}</td>
+            </tr>
+            <tr>
+                <th>Matchs de suspension</th>
+                <td>{{ blame.suspensionMatches is not null ? blame.suspensionMatches : '—' }}</td>
+            </tr>
+            <tr>
+                <th>Joueur</th>
+                <td>
+                    {% if blame.players %}
+                        {{ blame.players.firstName }} {{ blame.players.lastName }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <th>Match lié</th>
+                <td>
+                    {% if blame.relatedMatch %}
+                        {{ blame.relatedMatch.date|date('d/m/Y') }}
+                        — {{ blame.relatedMatch.homeTeam.teamName ?? '?' }} vs {{ blame.relatedMatch.awayTeam.teamName ?? '?' }}
+                        ({{ blame.relatedMatch.location }})
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_blames_index') }}">retour liste</a>
+
+    <a href="{{ path('app_blames_edit', {'id': blame.id}) }}">modifier</a>
+
+    {{ include('blames/_delete_form.html.twig') }}
+{% endblock %}

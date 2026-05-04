@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inventaires{% endblock %}
+
+{% block body %}
+    <h1>Inventaires</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Type</th>
+                <th>Quantité</th>
+                <th>Équipe</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for inventory in inventories %}
+            <tr>
+                <td>{{ inventory.id }}</td>
+                <td>{{ inventory.itemType }}</td>
+                <td>{{ inventory.quantity }}</td>
+                <td>{{ inventory.team ? inventory.team.teamName : '—' }}</td>
+                <td>
+                    <a href="{{ path('app_inventory_show', {'id': inventory.id}) }}">Voir</a>
+                    <a href="{{ path('app_inventory_edit', {'id': inventory.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucun enregistrement</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="page-toolbar"><a href="{{ path('app_inventory_new') }}" class="btn btn-primary">Créer un inventaire</a></p>
+{% endblock %}

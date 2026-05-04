@@ -68,6 +68,7 @@ final class TeamsController extends AbstractController
 
         return $this->render('teams/update.html.twig', [
             'formTeam' => $formTeam,
+            'teams' => $teams,
         ]);
     }
 

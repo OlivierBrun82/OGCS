@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier une absence{% endblock %}
+
+{% block body %}
+    <h1>Modifier une absence</h1>
+
+    {% if abscence.players %}
+        <p>Joueur : <strong>{{ abscence.players.firstName }} {{ abscence.players.lastName }}</strong></p>
+    {% endif %}
+
+    {{ include('abscences/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    <p>
+        <a href="{{ path('app_abscences_index') }}">Retour à la liste</a>
+        —
+        <a href="{{ path('app_abscences_show', {'id': abscence.id}) }}">Voir</a>
+    </p>
+
+    {{ include('abscences/_delete_form.html.twig') }}
+{% endblock %}

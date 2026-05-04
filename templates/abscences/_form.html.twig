@@ -1,0 +1,10 @@
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.motive) }}
+    {{ form_row(form.absence_start) }}
+    {{ form_row(form.absence_end) }}
+    {% if form.players is defined %}
+        {{ form_row(form.players) }}
+    {% endif %}
+    <button class="btn btn-primary" type="submit">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

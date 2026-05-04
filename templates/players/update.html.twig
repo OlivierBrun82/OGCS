@@ -1,1 +1,17 @@
-{{ form(formPlayer) }}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ players.firstName }} {{ players.lastName }}{% endblock %}
+
+{% block body %}
+    <h1>Modifier le joueur</h1>
+    <p class="page-meta">{{ players.firstName }} {{ players.lastName }}</p>
+
+    <section class="detail-panel detail-panel--form" aria-label="Formulaire">
+        {{ form(formPlayer) }}
+    </section>
+
+    <p class="page-toolbar mt-3">
+        <a href="{{ path('players_index') }}" class="btn btn-secondary btn-sm">← Liste des joueurs</a>
+        <a href="{{ path('player_show', { id: players.id }) }}" class="btn btn-secondary btn-sm">Voir la fiche</a>
+    </p>
+{% endblock %}

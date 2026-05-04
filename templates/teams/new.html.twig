@@ -1,3 +1,16 @@
-<h1>Création d'une nouvelle équipe</h1>
+{% extends 'base.html.twig' %}
 
-{{ form(formTeam) }}
+{% block title %}Nouvelle équipe{% endblock %}
+
+{% block body %}
+    <h1>Créer une équipe</h1>
+    <p class="page-meta">Indiquez le nom de l’équipe puis validez.</p>
+
+    <section class="detail-panel detail-panel--form" aria-label="Formulaire">
+        {{ form(formTeam) }}
+    </section>
+
+    <p class="page-toolbar mt-3">
+        <a href="{{ path('teams_index') }}" class="btn btn-secondary btn-sm">← Liste des équipes</a>
+    </p>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Messages — Envoyés{% endblock %}
+
+{% block body %}
+    <h1>Messages envoyés</h1>
+
+    {{ include('messages/_nav.html.twig') }}
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>À</th>
+                <th>Envoyé le</th>
+                <th>Lu par le destinataire</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in messages %}
+            <tr>
+                <td>{{ m.recipient.email }}</td>
+                <td>{{ m.sentAt|date('d/m/Y H:i') }}</td>
+                <td>{{ m.readAt ? 'Oui (' ~ m.readAt|date('d/m/Y H:i') ~ ')' : 'Non' }}</td>
+                <td><a href="{{ path('app_messages_show', {'id': m.id}) }}">Voir</a></td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4">Aucun message envoyé</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

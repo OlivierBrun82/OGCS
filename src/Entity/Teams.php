@@ -27,19 +27,32 @@ class Teams
     #[ORM\ManyToOne(inversedBy: 'Teams')]
     private ?User $user = null;
 
-    #[ORM\ManyToOne(inversedBy: 'teams')]
-    private ?Inventory $Inventory = null;
+    /**
+     * Stocks / inventaires associés à cette équipe (plusieurs lignes possibles).
+     *
+     * @var Collection<int, Inventory>
+     */
+    #[ORM\OneToMany(targetEntity: Inventory::class, mappedBy: 'team', orphanRemoval: false)]
+    private Collection $inventories;
 
     /**
      * @var Collection<int, Matches>
      */
-    #[ORM\ManyToMany(targetEntity: Matches::class, inversedBy: 'teams')]
-    private Collection $Matches;
+    #[ORM\OneToMany(targetEntity: Matches::class, mappedBy: 'homeTeam')]
+    private Collection $homeMatches;
+
+    /**
+     * @var Collection<int, Matches>
+     */
+    #[ORM\OneToMany(targetEntity: Matches::class, mappedBy: 'awayTeam')]
+    private Collection $awayMatches;
 
     public function __construct()
     {
         $this->players = new ArrayCollection();
-        $this->Matches = new ArrayCollection();
+        $this->homeMatches = new ArrayCollection();
+        $this->awayMatches = new ArrayCollection();
+        $this->inventories = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,7 +93,6 @@ class Teams
     public function removePlayer(Players $player): static
     {
         if ($this->players->removeElement($player)) {
-            // set the owning side to null (unless already changed)
             if ($player->getTeams() === $this) {
                 $player->setTeams(null);
             }
@@ -101,14 +113,29 @@ class Teams
         return $this;
     }
 
-    public function getInventory(): ?Inventory
+    /**
+     * @return Collection<int, Inventory>
+     */
+    public function getInventories(): Collection
     {
-        return $this->Inventory;
+        return $this->inventories;
     }
 
-    public function setInventory(?Inventory $Inventory): static
+    public function addInventory(Inventory $inventory): static
     {
-        $this->Inventory = $Inventory;
+        if (!$this->inventories->contains($inventory)) {
+            $this->inventories->add($inventory);
+            $inventory->setTeam($this);
+        }
+
+        return $this;
+    }
+
+    public function removeInventory(Inventory $inventory): static
+    {
+        if ($this->inventories->removeElement($inventory) && $inventory->getTeam() === $this) {
+            $inventory->setTeam(null);
+        }
 
         return $this;
     }
@@ -116,24 +143,16 @@ class Teams
     /**
      * @return Collection<int, Matches>
      */
-    public function getMatches(): Collection
+    public function getHomeMatches(): Collection
     {
-        return $this->Matches;
+        return $this->homeMatches;
     }
 
-    public function addMatch(Matches $match): static
+    /**
+     * @return Collection<int, Matches>
+     */
+    public function getAwayMatches(): Collection
     {
-        if (!$this->Matches->contains($match)) {
-            $this->Matches->add($match);
-        }
-
-        return $this;
-    }
-
-    public function removeMatch(Matches $match): static
-    {
-        $this->Matches->removeElement($match);
-
-        return $this;
+        return $this->awayMatches;
     }
 }

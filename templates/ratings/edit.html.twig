@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la note{% endblock %}
+
+{% block body %}
+    <h1>Modifier la note</h1>
+
+    {{ include('ratings/_form.html.twig', { button_label: 'Mettre à jour' }) }}
+
+    <p class="mt-3">
+        <a href="{{ path('players_ratings_show', {id: rating.id}) }}">Voir la note</a>
+        · <a href="{{ path('players_ratings_index') }}">Liste</a>
+    </p>
+
+    {{ include('ratings/_delete_form.html.twig') }}
+{% endblock %}

@@ -1,10 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>{% block title %}OGCS{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
         {% block stylesheets %}
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
         {% endblock %}
 
         {% block javascripts %}
@@ -19,6 +21,50 @@
         {% endif %}
     </head>
     <body>
-        {% block body %}{% endblock %}
+        {% set r = app.request.attributes.get('_route')|default('') %}
+        {% block header %}
+            <header class="site-header" data-controller="site-nav">
+                <div class="site-nav__backdrop" data-site-nav-target="backdrop" data-action="click->site-nav#close" aria-hidden="true"></div>
+
+                <div class="site-header__inner">
+                    <a class="site-brand" href="{{ path('app_home') }}">OGCS</a>
+
+                    <nav id="site-main-nav" class="site-nav site-nav--main site-nav__panel" data-site-nav-target="panel" data-action="click->site-nav#closeOnLink" aria-label="Principal">
+                        <ul class="site-nav__list">
+                            <li><a class="site-nav__link{{ r == 'app_home' ? ' site-nav__link--active' }}" href="{{ path('app_home') }}">Accueil</a></li>
+                            <li><a class="site-nav__link{{ r starts with 'players' or r starts with 'player_' ? ' site-nav__link--active' }}" href="{{ path('players_index') }}">Joueurs</a></li>
+                            <li><a class="site-nav__link{{ r starts with 'teams' or r starts with 'team_' ? ' site-nav__link--active' }}" href="{{ path('teams_index') }}">Équipes</a></li>
+                            <li><a class="site-nav__link{{ r starts with 'app_matches' ? ' site-nav__link--active' }}" href="{{ path('app_matches_index') }}">Matchs</a></li>
+                            <li><a class="site-nav__link{{ r starts with 'app_inventory' ? ' site-nav__link--active' }}" href="{{ path('app_inventory_index') }}">Inventaire</a></li>
+                            <li><a class="site-nav__link{{ r starts with 'app_messages' ? ' site-nav__link--active' }}" href="{{ path('app_messages_inbox') }}">Messages</a></li>
+                            <li><a class="site-nav__link{{ r starts with 'app_abscences' ? ' site-nav__link--active' }}" href="{{ path('app_abscences_index') }}">Absences</a></li>
+                        </ul>
+                    </nav>
+
+                    <div class="site-header__toolbar">
+                        {% if app.user %}
+                            <div class="site-header__session" aria-label="Session">
+                                <span class="site-header__user" title="{{ app.user.userIdentifier }}">{{ app.user.userIdentifier }}</span>
+                                <a class="site-header__logout" href="{{ path('_logout_main') }}">Déconnexion</a>
+                            </div>
+                        {% endif %}
+                        <button type="button" class="site-nav__burger" data-site-nav-target="toggle" data-action="click->site-nav#toggle" aria-controls="site-main-nav" aria-expanded="false" aria-label="Ouvrir le menu de navigation">
+                            <span class="site-nav__burger-lines" aria-hidden="true">
+                                <span></span><span></span><span></span>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+        {% endblock %}
+        <div class="page-shell">
+            {% block body %}
+            {% endblock %}
+        </div>
+        {% block footer %}
+            <footer class="site-footer">
+                <p class="site-footer__text">OGCS</p>
+            </footer>
+        {% endblock %}
     </body>
 </html>

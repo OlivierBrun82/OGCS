@@ -36,10 +36,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
+     * Notes données par ce coach (utilisateur).
+     *
      * @var Collection<int, Ratings>
      */
-    #[ORM\ManyToMany(targetEntity: Ratings::class, inversedBy: 'users')]
-    private Collection $relation;
+    #[ORM\OneToMany(targetEntity: Ratings::class, mappedBy: 'coach', orphanRemoval: false)]
+    private Collection $coachRatings;
 
     /**
      * @var Collection<int, Teams>
@@ -66,19 +68,30 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $Mailling;
 
     /**
+     * Messages envoyés.
+     *
      * @var Collection<int, Message>
      */
-    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'user')]
-    private Collection $Message;
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'sender', orphanRemoval: false)]
+    private Collection $sentMessages;
+
+    /**
+     * Messages reçus.
+     *
+     * @var Collection<int, Message>
+     */
+    #[ORM\OneToMany(targetEntity: Message::class, mappedBy: 'recipient', orphanRemoval: false)]
+    private Collection $receivedMessages;
 
     public function __construct()
     {
-        $this->relation = new ArrayCollection();
+        $this->coachRatings = new ArrayCollection();
         $this->Teams = new ArrayCollection();
         $this->Abscences = new ArrayCollection();
         $this->Blames = new ArrayCollection();
         $this->Mailling = new ArrayCollection();
-        $this->Message = new ArrayCollection();
+        $this->sentMessages = new ArrayCollection();
+        $this->receivedMessages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -165,23 +178,24 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Ratings>
      */
-    public function getRelation(): Collection
+    public function getCoachRatings(): Collection
     {
-        return $this->relation;
+        return $this->coachRatings;
     }
 
-    public function addRelation(Ratings $relation): static
+    public function addCoachRating(Ratings $rating): static
     {
-        if (!$this->relation->contains($relation)) {
-            $this->relation->add($relation);
+        if (!$this->coachRatings->contains($rating)) {
+            $this->coachRatings->add($rating);
+            $rating->setCoach($this);
         }
 
         return $this;
     }
 
-    public function removeRelation(Ratings $relation): static
+    public function removeCoachRating(Ratings $rating): static
     {
-        $this->relation->removeElement($relation);
+        $this->coachRatings->removeElement($rating);
 
         return $this;
     }
@@ -303,29 +317,49 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Message>
      */
-    public function getMessage(): Collection
+    public function getSentMessages(): Collection
     {
-        return $this->Message;
+        return $this->sentMessages;
     }
 
-    public function addMessage(Message $message): static
+    public function addSentMessage(Message $message): static
     {
-        if (!$this->Message->contains($message)) {
-            $this->Message->add($message);
-            $message->setUser($this);
+        if (!$this->sentMessages->contains($message)) {
+            $this->sentMessages->add($message);
+            $message->setSender($this);
         }
 
         return $this;
     }
 
-    public function removeMessage(Message $message): static
+    public function removeSentMessage(Message $message): static
     {
-        if ($this->Message->removeElement($message)) {
-            // set the owning side to null (unless already changed)
-            if ($message->getUser() === $this) {
-                $message->setUser(null);
-            }
+        $this->sentMessages->removeElement($message);
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getReceivedMessages(): Collection
+    {
+        return $this->receivedMessages;
+    }
+
+    public function addReceivedMessage(Message $message): static
+    {
+        if (!$this->receivedMessages->contains($message)) {
+            $this->receivedMessages->add($message);
+            $message->setRecipient($this);
         }
+
+        return $this;
+    }
+
+    public function removeReceivedMessage(Message $message): static
+    {
+        $this->receivedMessages->removeElement($message);
 
         return $this;
     }

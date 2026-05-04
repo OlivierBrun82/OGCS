@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_blames_delete', {'id': blame.id}) }}" onsubmit="return confirm('Supprimer cette sanction ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ blame.id) }}">
+    <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
+</form>

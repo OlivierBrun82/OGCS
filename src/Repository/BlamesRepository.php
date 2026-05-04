@@ -16,28 +16,15 @@ class BlamesRepository extends ServiceEntityRepository
         parent::__construct($registry, Blames::class);
     }
 
-    //    /**
-    //     * @return Blames[] Returns an array of Blames objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('b.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Blames
-    //    {
-    //        return $this->createQueryBuilder('b')
-    //            ->andWhere('b.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * @return list<Blames>
+     */
+    public function findAllRecentFirst(): array
+    {
+        return $this->createQueryBuilder('b')
+            ->orderBy('b.start_date', 'DESC')
+            ->addOrderBy('b.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -2,20 +2,30 @@
 
 {% block title %}Bienvenu, veuillez vous connecter{% endblock %}
 
+{% block header %}
+{# Pas de navbar sur la connexion #}
+{% endblock %}
+
 {% block body %}
+    <section class="auth-panel" aria-labelledby="login-heading">
+        {% if error %}
+            <div class="auth-panel__error" role="alert">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+        {% endif %}
 
-    {% if error %}
-        <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
+        <h1 class="auth-panel__title" id="login-heading">Connexion</h1>
 
-    <form action="{{ path('app_login')}}" method="POST">
-        <label for="username">Email:</label>
-        <input type="text" name="_username" id="username" value="{{ last_username }}" required>
+        <form class="auth-panel__form" action="{{ path('app_login') }}" method="post">
+            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+            <label class="auth-panel__label" for="username">Email</label>
+            <input class="auth-panel__input" type="email" name="_username" id="username" value="{{ last_username }}" required autocomplete="username">
 
-        <label for="password">Mot de passe:</label>
-        <input type="password" name="_password" id="password" required>
+            <label class="auth-panel__label" for="password">Mot de passe</label>
+            <input class="auth-panel__input" type="password" name="_password" id="password" required autocomplete="current-password">
 
-        <button type="submit">Connection</button>
-    
-    </form>
+            <button class="btn btn-primary btn--block" type="submit">Se connecter</button>
+        </form>
+
+        <p class="auth-panel__divider">Pas encore de compte ?</p>
+        <a class="btn btn-secondary btn--block" href="{{ path('app_register') }}">S’enregistrer</a>
+    </section>
 {% endblock %}

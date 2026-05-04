@@ -16,6 +16,20 @@ class PlayersRepository extends ServiceEntityRepository
         parent::__construct($registry, Players::class);
     }
 
+    public function countByTeamIdExcludingPlayer(int $teamId, ?int $excludePlayerId): int
+    {
+        $qb = $this->createQueryBuilder('p')
+            ->select('COUNT(p.id)')
+            ->where('IDENTITY(p.Teams) = :tid')
+            ->setParameter('tid', $teamId);
+
+        if ($excludePlayerId !== null) {
+            $qb->andWhere('p.id != :pid')->setParameter('pid', $excludePlayerId);
+        }
+
+        return (int) $qb->getQuery()->getSingleScalarResult();
+    }
+
 //    /**
 //     * @return Players[] Returns an array of Players objects
 //     */

@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau message{% endblock %}
+
+{% block body %}
+    <h1>Nouveau message</h1>
+
+    {{ include('messages/_nav.html.twig') }}
+
+    {{ form_start(form) }}
+        {{ form_errors(form) }}
+        {{ form_row(form.recipient) }}
+        {{ form_row(form.message) }}
+        <button class="btn btn-primary" type="submit">Envoyer</button>
+    {{ form_end(form) }}
+{% endblock %}

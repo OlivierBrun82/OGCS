@@ -1,0 +1,40 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Note{% endblock %}
+
+{% block body %}
+    <h1>Note</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Coach</th>
+                <td>{{ rating.coach.email }}</td>
+            </tr>
+            <tr>
+                <th>Joueur</th>
+                <td>{{ rating.player.firstName }} {{ rating.player.lastName }}</td>
+            </tr>
+            <tr>
+                <th>Note</th>
+                <td><strong>{{ rating.rating }}</strong> / 10</td>
+            </tr>
+            <tr>
+                <th>Commentaire</th>
+                <td>{{ rating.message ? rating.message|nl2br : '—' }}</td>
+            </tr>
+            <tr>
+                <th>Enregistrée le</th>
+                <td>{{ rating.createdAt|date('d/m/Y à H:i') }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>
+        <a href="{{ path('players_ratings_index') }}">← Liste des notes</a>
+        {% if app.user and rating.coach and rating.coach.id == app.user.id %}
+            · <a href="{{ path('players_ratings_update', {id: rating.id}) }}">Modifier</a>
+            {{ include('ratings/_delete_form.html.twig') }}
+        {% endif %}
+    </p>
+{% endblock %}

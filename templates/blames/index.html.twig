@@ -1,0 +1,62 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Cartons (blames){% endblock %}
+
+{% block body %}
+    <h1>Cartons</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date de début</th>
+                <th>Type</th>
+                <th>Durée (min.) / Suspension (matchs)</th>
+                <th>Joueur</th>
+                <th>Match</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for blame in blames %}
+            <tr>
+                <td>{{ blame.id }}</td>
+                <td>{{ blame.startDate ? blame.startDate|date('Y-m-d') : '' }}</td>
+                <td>{{ blame.cardType ? blame.cardType.label : '' }}</td>
+                <td>
+                    {% if blame.cardType and blame.cardType.value == 'white' %}
+                        {{ blame.durationMinutes ?? '—' }} min
+                    {% else %}
+                        {{ blame.suspensionMatches is not null ? blame.suspensionMatches ~ ' match(s)' : '—' }}
+                    {% endif %}
+                </td>
+                <td>
+                    {% if blame.players %}
+                        {{ blame.players.firstName }} {{ blame.players.lastName }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    {% if blame.relatedMatch %}
+                        {{ blame.relatedMatch.date|date('d/m/Y') }}
+                        — {{ blame.relatedMatch.homeTeam.teamName ?? '?' }} vs {{ blame.relatedMatch.awayTeam.teamName ?? '?' }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('app_blames_show', {'id': blame.id}) }}">voir</a>
+                    · <a href="{{ path('app_blames_edit', {'id': blame.id}) }}">modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="7">Aucun enregistrement</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <p class="page-toolbar"><a href="{{ path('app_blames_new') }}" class="btn btn-primary">Nouvelle sanction</a></p>
+{% endblock %}

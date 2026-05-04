@@ -2,16 +2,23 @@
 
 {% block title %}Enregistrement{% endblock %}
 
+{% block header %}
+{# Pas de navbar sur l'inscription #}
+{% endblock %}
+
 {% block body %}
-    <h1>Enregistrement</h1>
+    <section class="auth-panel" aria-labelledby="register-heading">
+        <h1 class="auth-panel__title" id="register-heading">Créer un compte coach</h1>
 
-    {{ form_errors(registrationForm) }}
+        {{ form_errors(registrationForm) }}
 
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Mot de passe'
-        }) }}
-        <button type="submit" class="btn">Enregistrer vous</button>
-    {{ form_end(registrationForm) }}
+        {{ form_start(registrationForm, { attr: { class: 'auth-panel__form' } }) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.plainPassword, { label: 'Mot de passe' }) }}
+            <button type="submit" class="btn btn-primary btn--block">S’enregistrer</button>
+        {{ form_end(registrationForm) }}
+
+        <p class="auth-panel__divider">Déjà un compte ?</p>
+        <a class="btn btn-secondary btn--block" href="{{ path('app_login') }}">Se connecter</a>
+    </section>
 {% endblock %}

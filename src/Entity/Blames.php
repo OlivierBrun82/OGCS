@@ -2,9 +2,12 @@
 
 namespace App\Entity;
 
+use App\Enum\BlameCardType;
 use App\Repository\BlamesRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: BlamesRepository::class)]
 class Blames
@@ -14,23 +17,31 @@ class Blames
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(type: Types::DATE_MUTABLE, nullable: true)]
+    #[Assert\NotNull(message: 'La date de début est obligatoire.')]
+    #[ORM\Column(type: Types::DATE_MUTABLE)]
     private ?\DateTime $start_date = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?\DateTime $white_card = null;
+    #[Assert\NotNull(message: 'Le type de carton est obligatoire.')]
+    #[ORM\Column(enumType: BlameCardType::class)]
+    private ?BlameCardType $card_type = null;
 
+    /** Durée d'exclusion en minutes (carton blanc uniquement). */
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $yellow_card = null;
+    private ?int $duration_minutes = null;
 
+    /** Nombre de matchs de suspension (cartons jaune et rouge). */
     #[ORM\Column(nullable: true)]
-    private ?\DateTime $red_card = null;
+    private ?int $suspension_matches = null;
 
     #[ORM\ManyToOne(inversedBy: 'Blames')]
     private ?Players $players = null;
 
     #[ORM\ManyToOne(inversedBy: 'Blames')]
     private ?User $user = null;
+
+    #[ORM\ManyToOne(inversedBy: 'blames')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Matches $related_match = null;
 
     public function getId(): ?int
     {
@@ -49,38 +60,38 @@ class Blames
         return $this;
     }
 
-    public function getWhiteCard(): ?\DateTime
+    public function getCardType(): ?BlameCardType
     {
-        return $this->white_card;
+        return $this->card_type;
     }
 
-    public function setWhiteCard(?\DateTime $white_card): static
+    public function setCardType(?BlameCardType $card_type): static
     {
-        $this->white_card = $white_card;
+        $this->card_type = $card_type;
 
         return $this;
     }
 
-    public function getYellowCard(): ?\DateTime
+    public function getDurationMinutes(): ?int
     {
-        return $this->yellow_card;
+        return $this->duration_minutes;
     }
 
-    public function setYellowCard(?\DateTime $yellow_card): static
+    public function setDurationMinutes(?int $duration_minutes): static
     {
-        $this->yellow_card = $yellow_card;
+        $this->duration_minutes = $duration_minutes;
 
         return $this;
     }
 
-    public function getRedCard(): ?\DateTime
+    public function getSuspensionMatches(): ?int
     {
-        return $this->red_card;
+        return $this->suspension_matches;
     }
 
-    public function setRedCard(?\DateTime $red_card): static
+    public function setSuspensionMatches(?int $suspension_matches): static
     {
-        $this->red_card = $red_card;
+        $this->suspension_matches = $suspension_matches;
 
         return $this;
     }
@@ -107,5 +118,37 @@ class Blames
         $this->user = $user;
 
         return $this;
+    }
+
+    public function getRelatedMatch(): ?Matches
+    {
+        return $this->related_match;
+    }
+
+    public function setRelatedMatch(?Matches $related_match): static
+    {
+        $this->related_match = $related_match;
+
+        return $this;
+    }
+
+    #[Assert\Callback]
+    public function validateSanctionFields(ExecutionContextInterface $context): void
+    {
+        if ($this->card_type === BlameCardType::White) {
+            if ($this->duration_minutes === null || $this->duration_minutes < 1) {
+                $context->buildViolation('Indiquez une durée en minutes (au moins 1) pour un carton blanc.')
+                    ->atPath('duration_minutes')
+                    ->addViolation();
+            }
+        }
+
+        if ($this->card_type === BlameCardType::Yellow || $this->card_type === BlameCardType::Red) {
+            if ($this->suspension_matches !== null && $this->suspension_matches < 0) {
+                $context->buildViolation('Le nombre de matchs de suspension ne peut pas être négatif.')
+                    ->atPath('suspension_matches')
+                    ->addViolation();
+            }
+        }
     }
 }

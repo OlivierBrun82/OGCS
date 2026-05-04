@@ -7,8 +7,12 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 #[ORM\Entity(repositoryClass: MatchesRepository::class)]
+#[Assert\Callback('validateTeams')]
+#[Assert\Callback('validateCompositionPlayerUniqueness')]
 class Matches
 {
     #[ORM\Id]
@@ -25,15 +29,74 @@ class Matches
     #[ORM\Column(length: 255)]
     private ?string $location = null;
 
+    #[Assert\NotNull(message: 'Choisissez l\'équipe à domicile.')]
+    #[ORM\ManyToOne(inversedBy: 'homeMatches')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
+    private ?Teams $homeTeam = null;
+
+    #[Assert\NotNull(message: 'Choisissez l\'équipe à l\'extérieur.')]
+    #[ORM\ManyToOne(inversedBy: 'awayMatches')]
+    #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
+    private ?Teams $awayTeam = null;
+
     /**
-     * @var Collection<int, Teams>
+     * @var Collection<int, Blames>
      */
-    #[ORM\ManyToMany(targetEntity: Teams::class, mappedBy: 'Matches')]
-    private Collection $teams;
+    #[ORM\OneToMany(targetEntity: Blames::class, mappedBy: 'related_match')]
+    private Collection $blames;
+
+    /**
+     * Feuille de match : joueur + rôle pour cette rencontre.
+     *
+     * @var Collection<int, Composition>
+     */
+    #[ORM\OneToMany(targetEntity: Composition::class, mappedBy: 'match', cascade: ['persist'], orphanRemoval: true)]
+    #[ORM\OrderBy(['id' => 'ASC'])]
+    private Collection $compositions;
 
     public function __construct()
     {
-        $this->teams = new ArrayCollection();
+        $this->blames = new ArrayCollection();
+        $this->compositions = new ArrayCollection();
+    }
+
+    public function validateTeams(ExecutionContextInterface $context): void
+    {
+        if ($this->homeTeam === null || $this->awayTeam === null) {
+            return;
+        }
+
+        $sameReference = $this->homeTeam === $this->awayTeam;
+        $sameId = $this->homeTeam->getId() !== null
+            && $this->awayTeam->getId() !== null
+            && $this->homeTeam->getId() === $this->awayTeam->getId();
+
+        if ($sameReference || $sameId) {
+            $context->buildViolation('L\'équipe domicile et l\'équipe extérieure doivent être distinctes.')
+                ->atPath('awayTeam')
+                ->addViolation();
+        }
+    }
+
+    public function validateCompositionPlayerUniqueness(ExecutionContextInterface $context): void
+    {
+        $seen = [];
+        foreach ($this->compositions as $line) {
+            $player = $line->getPlayer();
+            if ($player === null) {
+                continue;
+            }
+            foreach ($seen as $existing) {
+                if ($existing === $player) {
+                    $context->buildViolation('Chaque joueur ne peut être présent qu\'une fois dans la composition.')
+                        ->atPath('compositions')
+                        ->addViolation();
+
+                    return;
+                }
+            }
+            $seen[] = $player;
+        }
     }
 
     public function getId(): ?int
@@ -77,30 +140,91 @@ class Matches
         return $this;
     }
 
+    public function getHomeTeam(): ?Teams
+    {
+        return $this->homeTeam;
+    }
+
+    public function setHomeTeam(?Teams $homeTeam): static
+    {
+        $this->homeTeam = $homeTeam;
+
+        return $this;
+    }
+
+    public function getAwayTeam(): ?Teams
+    {
+        return $this->awayTeam;
+    }
+
+    public function setAwayTeam(?Teams $awayTeam): static
+    {
+        $this->awayTeam = $awayTeam;
+
+        return $this;
+    }
+
     /**
-     * @return Collection<int, Teams>
+     * @return Collection<int, Blames>
      */
-    public function getTeams(): Collection
+    public function getBlames(): Collection
     {
-        return $this->teams;
+        return $this->blames;
     }
 
-    public function addTeam(Teams $team): static
+    public function addBlame(Blames $blame): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->addMatch($this);
+        if (!$this->blames->contains($blame)) {
+            $this->blames->add($blame);
+            $blame->setRelatedMatch($this);
         }
 
         return $this;
     }
 
-    public function removeTeam(Teams $team): static
+    public function removeBlame(Blames $blame): static
     {
-        if ($this->teams->removeElement($team)) {
-            $team->removeMatch($this);
+        if ($this->blames->removeElement($blame)) {
+            if ($blame->getRelatedMatch() === $this) {
+                $blame->setRelatedMatch(null);
+            }
         }
 
         return $this;
+    }
+
+    /**
+     * @return Collection<int, Composition>
+     */
+    public function getCompositions(): Collection
+    {
+        return $this->compositions;
+    }
+
+    public function addComposition(Composition $composition): static
+    {
+        if (!$this->compositions->contains($composition)) {
+            $this->compositions->add($composition);
+            $composition->setMatch($this);
+        }
+
+        return $this;
+    }
+
+    public function removeComposition(Composition $composition): static
+    {
+        $this->compositions->removeElement($composition);
+
+        return $this;
+    }
+
+    public function setCompositions(iterable $compositions): void
+    {
+        foreach ($this->compositions->toArray() as $c) {
+            $this->removeComposition($c);
+        }
+        foreach ($compositions as $c) {
+            $this->addComposition($c);
+        }
     }
 }

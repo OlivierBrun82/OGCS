@@ -1,0 +1,153 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Match{% endblock %}
+
+{% block body %}
+    <h1>Match</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ match.id }}</td>
+            </tr>
+            <tr>
+                <th>Date</th>
+                <td>{{ match.date ? match.date|date('Y-m-d') : '' }}</td>
+            </tr>
+            <tr>
+                <th>Équipe à domicile</th>
+                <td>{{ match.homeTeam ? match.homeTeam.teamName : '—' }}</td>
+            </tr>
+            <tr>
+                <th>Équipe extérieure</th>
+                <td>{{ match.awayTeam ? match.awayTeam.teamName : '—' }}</td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <td>{{ match.type }}</td>
+            </tr>
+            <tr>
+                <th>Lieu</th>
+                <td>{{ match.location }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2 class="mt-4">Composition enregistrée</h2>
+
+    {% if match.compositions|length > 0 %}
+        <div class="row">
+            <div class="col-md-6">
+                <h3 class="h5">{{ match.homeTeam ? match.homeTeam.teamName : 'Domicile' }}</h3>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Joueur</th>
+                            <th>Rôle (match)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for line in match.compositions %}
+                        {% if line.player.teams and match.homeTeam and line.player.teams.id == match.homeTeam.id %}
+                            <tr>
+                                <td>{{ line.player.number ?? '—' }}</td>
+                                <td>{{ line.player.firstName }} {{ line.player.lastName }}</td>
+                                <td>{{ line.role.label() }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="col-md-6">
+                <h3 class="h5">{{ match.awayTeam ? match.awayTeam.teamName : 'Extérieur' }}</h3>
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Joueur</th>
+                            <th>Rôle (match)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for line in match.compositions %}
+                        {% if line.player.teams and match.awayTeam and line.player.teams.id == match.awayTeam.id %}
+                            <tr>
+                                <td>{{ line.player.number ?? '—' }}</td>
+                                <td>{{ line.player.firstName }} {{ line.player.lastName }}</td>
+                                <td>{{ line.role.label() }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <p class="text-muted small">Les rôles sont ceux choisis pour cette rencontre (feuille de match), distincts des effectifs complets ci-dessous.</p>
+    {% else %}
+        <p class="text-muted">Aucune ligne de composition pour ce match. <a href="{{ path('app_matches_edit', {id: match.id}) }}">Ajouter une composition</a></p>
+    {% endif %}
+
+    <h2 class="mt-4">Effectifs (tous les joueurs des équipes)</h2>
+
+    <div class="row">
+        <div class="col-md-6">
+            <h3>{{ match.homeTeam ? match.homeTeam.teamName : 'Domicile' }}</h3>
+            {% if match.homeTeam and match.homeTeam.players|length > 0 %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for player in match.homeTeam.players|sort((a, b) => a.lastName <=> b.lastName) %}
+                        <tr>
+                            <td>{{ player.number ?? '—' }}</td>
+                            <td>{{ player.lastName }}</td>
+                            <td>{{ player.firstName }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">Aucun joueur dans cette équipe.</p>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h3>{{ match.awayTeam ? match.awayTeam.teamName : 'Extérieur' }}</h3>
+            {% if match.awayTeam and match.awayTeam.players|length > 0 %}
+                <table class="table table-sm">
+                    <thead>
+                        <tr>
+                            <th>N°</th>
+                            <th>Nom</th>
+                            <th>Prénom</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for player in match.awayTeam.players|sort((a, b) => a.lastName <=> b.lastName) %}
+                        <tr>
+                            <td>{{ player.number ?? '—' }}</td>
+                            <td>{{ player.lastName }}</td>
+                            <td>{{ player.firstName }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="text-muted">Aucun joueur dans cette équipe.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <p class="mt-2"><a href="{{ path('app_matches_index') }}">retour liste</a></p>
+
+    <a href="{{ path('app_matches_edit', {'id': match.id}) }}">modifier</a>
+
+    {{ include('matches/_delete_form.html.twig') }}
+{% endblock %}

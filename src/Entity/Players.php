@@ -5,12 +5,14 @@ namespace App\Entity;
 use App\Enum\PlayerCategorie;
 use App\Enum\PlayerStatut;
 use App\Repository\PlayersRepository;
+use App\Validator\Constraints\MaxPlayersPerTeam;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlayersRepository::class)]
+#[MaxPlayersPerTeam(max: 11)]
 class Players
 {
     #[ORM\Id]
@@ -49,10 +51,12 @@ class Players
     private ?Teams $Teams = null;
 
     /**
+     * Notes reçues par ce joueur.
+     *
      * @var Collection<int, Ratings>
      */
-    #[ORM\ManyToMany(targetEntity: Ratings::class, inversedBy: 'players')]
-    private Collection $Ratings;
+    #[ORM\OneToMany(targetEntity: Ratings::class, mappedBy: 'player', orphanRemoval: false)]
+    private Collection $playerRatings;
 
     /**
      * @var Collection<int, Abscences>
@@ -68,7 +72,7 @@ class Players
 
     public function __construct()
     {
-        $this->Ratings = new ArrayCollection();
+        $this->playerRatings = new ArrayCollection();
         $this->relation = new ArrayCollection();
         $this->Blames = new ArrayCollection();
     }
@@ -204,23 +208,24 @@ class Players
     /**
      * @return Collection<int, Ratings>
      */
-    public function getRatings(): Collection
+    public function getPlayerRatings(): Collection
     {
-        return $this->Ratings;
+        return $this->playerRatings;
     }
 
-    public function addRating(Ratings $rating): static
+    public function addPlayerRating(Ratings $rating): static
     {
-        if (!$this->Ratings->contains($rating)) {
-            $this->Ratings->add($rating);
+        if (!$this->playerRatings->contains($rating)) {
+            $this->playerRatings->add($rating);
+            $rating->setPlayer($this);
         }
 
         return $this;
     }
 
-    public function removeRating(Ratings $rating): static
+    public function removePlayerRating(Ratings $rating): static
     {
-        $this->Ratings->removeElement($rating);
+        $this->playerRatings->removeElement($rating);
 
         return $this;
     }

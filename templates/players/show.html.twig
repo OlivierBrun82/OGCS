@@ -1,17 +1,46 @@
-<article>
-    <span>
-        Prénom : {{players.firstname}} <br>
-        Nom : {{players.lastname}} <br>
-        Statut : {{players.statut.value}} <br>
-        Licence : {{players.licence|date('d/m/Y')}} <br>
-        Email : {{players.email}} <br>
-        Date de naissance : {{players.birthdate|date("d/m/Y")}} <br>
-        Maillot numéro : {{players.number}}</span> <br>
+{% extends 'base.html.twig' %}
 
-    {# <form action="{{path('player_delete', { id : players.id})}}" method="POST"> #}
-    {# <input type="hidden" name="_token" value={{csrf_token('delete' ~ player.id)}}>
-    <button type="submit">supression du joueur</button> #}
-    </form>
-    <a href="{{path('players_index')}}">Retourner à l'index</a>
+{% block title %}{{ players.firstName }} {{ players.lastName }}{% endblock %}
 
-</article>
+{% block body %}
+    <h1>{{ players.firstName }} {{ players.lastName }}</h1>
+    <p class="page-meta">Fiche joueur · maillot {% if players.number is not null %}#{{ players.number }}{% else %}non attribué{% endif %}</p>
+
+    <section class="detail-panel" aria-label="Informations joueur">
+        <dl class="detail-list">
+            <dt>Prénom</dt>
+            <dd>{{ players.firstName }}</dd>
+            <dt>Nom</dt>
+            <dd>{{ players.lastName }}</dd>
+            <dt>Statut</dt>
+            <dd>{{ players.statut ? players.statut.value : '—' }}</dd>
+            <dt>Email</dt>
+            <dd>{{ players.email }}</dd>
+            <dt>Date de naissance</dt>
+            <dd>{{ players.birthdate ? players.birthdate|date('d/m/Y') : '—' }}</dd>
+            <dt>Licence</dt>
+            <dd>{{ players.licence ? players.licence|date('d/m/Y') : '—' }}</dd>
+            <dt>Certificat médical</dt>
+            <dd>{{ players.medicalCertificate ? players.medicalCertificate|date('d/m/Y') : '—' }}</dd>
+            <dt>Catégorie</dt>
+            <dd>{{ players.categorie ? players.categorie.value : '—' }}</dd>
+            <dt>Équipe</dt>
+            <dd>
+                {% if players.teams %}
+                    <a href="{{ path('team_show', { id: players.teams.id }) }}">{{ players.teams.teamName }}</a>
+                {% else %}
+                    —
+                {% endif %}
+            </dd>
+        </dl>
+    </section>
+
+    <p class="page-toolbar">
+        <a href="{{ path('player_update', { id: players.id }) }}" class="btn btn-primary">Modifier</a>
+        <a href="{{ path('app_abscences_new_for_player', { player: players.id }) }}" class="btn btn-secondary">Ajouter une absence</a>
+    </p>
+
+    <p class="page-toolbar page-toolbar--back">
+        <a href="{{ path('players_index') }}">← Liste des joueurs</a>
+    </p>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Notes{% endblock %}
+
+{% block body %}
+    <h1>Notes joueurs</h1>
+
+    <p>
+        <a href="{{ path('players_ratings_new') }}" class="btn btn-primary btn-sm">Nouvelle note</a>
+    </p>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Coach</th>
+                <th>Joueur</th>
+                <th>Note</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for r in ratings %}
+            <tr>
+                <td>{{ r.id }}</td>
+                <td>{{ r.createdAt|date('d/m/Y H:i') }}</td>
+                <td>{{ r.coach.email }}</td>
+                <td>{{ r.player.firstName }} {{ r.player.lastName }}</td>
+                <td><strong>{{ r.rating }}</strong> / 10</td>
+                <td>
+                    <a href="{{ path('players_ratings_show', {id: r.id}) }}">voir</a>
+                    {% if app.user and r.coach and r.coach.id == app.user.id %}
+                        · <a href="{{ path('players_ratings_update', {id: r.id}) }}">modifier</a>
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6" class="text-muted">Aucune note. <a href="{{ path('players_ratings_new') }}">En créer une</a></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

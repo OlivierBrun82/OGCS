@@ -8,14 +8,13 @@
     <article>
         <h2>{{players.firstname}} {{players.lastname}}</h2>
         <span>{{players.number}}</span>
-        <a href="{{ path ('player_show', {id : players.id})}}">Voir le {{players.firstname}} {{players.lastname}}</a>
-        <a href="{{path ('player_update', {id : players.id})}}">Modifier le {{players.firstname}} {{players.lastname}}</a>
+        <a href="{{ path ('player_show', {id : players.id})}}">Voir le joueur{{players.firstname}} {{players.lastname}}</a>
+        <a href="{{path ('player_update', {id : players.id})}}">Modifier le joueur{{players.firstname}} {{players.lastname}}</a>
         <form action="{{path ('player_delete', {id : players.id})}}" method="POST">
             <input type="hidden" name="_token" value="{{csrf_token('delete' ~ players.id)}}">
-            <button type="submit" class="btn btn-danger">Supprimer le {{players.firstname}} {{players.lastname}}</button>
+            <button type="submit" class="btn btn-danger">Supprimer le joueur {{players.firstname}} {{players.lastname}}</button>
         </form>
     </article>
 {% endfor %}
-<br>
-<a href="{{ path ('player_new')}}">Créer un joueur</a>
+<p class="page-toolbar"><a href="{{ path('player_new') }}" class="btn btn-primary">Créer un joueur</a></p>
 {% endblock %}

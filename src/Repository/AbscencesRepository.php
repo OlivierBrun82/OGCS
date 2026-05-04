@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Abscences;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -16,28 +17,17 @@ class AbscencesRepository extends ServiceEntityRepository
         parent::__construct($registry, Abscences::class);
     }
 
-    //    /**
-    //     * @return Abscences[] Returns an array of Abscences objects
-    //     */
-    //    public function findByExampleField($value): array
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->orderBy('a.id', 'ASC')
-    //            ->setMaxResults(10)
-    //            ->getQuery()
-    //            ->getResult()
-    //        ;
-    //    }
-
-    //    public function findOneBySomeField($value): ?Abscences
-    //    {
-    //        return $this->createQueryBuilder('a')
-    //            ->andWhere('a.exampleField = :val')
-    //            ->setParameter('val', $value)
-    //            ->getQuery()
-    //            ->getOneOrNullResult()
-    //        ;
-    //    }
+    /**
+     * @return list<Abscences>
+     */
+    public function findForCoach(User $coach): array
+    {
+        return $this->createQueryBuilder('a')
+            ->andWhere('a.user = :coach')
+            ->setParameter('coach', $coach)
+            ->orderBy('a.absence_start', 'DESC')
+            ->addOrderBy('a.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

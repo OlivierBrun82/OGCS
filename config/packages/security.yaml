@@ -23,18 +23,22 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
+                default_target_path: app_home
 
-            # Activate different ways to authenticate:
+            logout:
+                path: /logout
+                target: app_login
+
             # https://symfony.com/doc/current/security.html#the-firewall
-
             # https://symfony.com/doc/current/security/impersonating_user.html
             # switch_user: true
 
-    # Note: Only the *first* matching rule is applied
+    # Premier critère correspondant appliqué (ordre important).
     access_control:
-        # - { path : ^/, roles: IS_AUTHENTICATED_FULLY}
-        # - { path: ^/admin, roles: ROLE_ADMIN }
-        # - { path: ^/profile, roles: ROLE_USER }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
+        # Inscription coach : retirer cette ligne pour exiger la création des comptes uniquement en console.
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:

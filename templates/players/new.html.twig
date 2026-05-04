@@ -1,3 +1,16 @@
-<h1>Création d'un nouveau joueur</h1>
+{% extends 'base.html.twig' %}
 
-{{ form(formPlayer)}}
+{% block title %}Nouveau joueur{% endblock %}
+
+{% block body %}
+    <h1>Créer un joueur</h1>
+    <p class="page-meta">Renseignez les informations du joueur puis validez.</p>
+
+    <section class="detail-panel detail-panel--form" aria-label="Formulaire">
+        {{ form(formPlayer) }}
+    </section>
+
+    <p class="page-toolbar mt-3">
+        <a href="{{ path('players_index') }}" class="btn btn-secondary btn-sm">← Liste des joueurs</a>
+    </p>
+{% endblock %}

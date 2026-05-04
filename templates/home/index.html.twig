@@ -1,0 +1,74 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Accueil — OGCS{% endblock %}
+
+{% block body %}
+    <main class="home-dashboard">
+        <header class="home-dashboard__intro">
+            <h1 class="home-dashboard__title">Tableau de bord</h1>
+            <p class="home-dashboard__lead">Aperçu des joueurs, équipes et derniers matchs.</p>
+        </header>
+
+        <div class="home-dashboard__grid">
+            <section class="home-list-panel home-list-panel--fade home-list-panel--delay-1" aria-labelledby="home-players-heading">
+                <header class="home-list-panel__head">
+                    <h2 id="home-players-heading" class="home-list-panel__title">Joueurs</h2>
+                    <a class="home-list-panel__more" href="{{ path('players_index') }}">Tout voir</a>
+                </header>
+                <ul class="home-list-panel__list">
+                    {% for player in preview_players %}
+                        <li class="home-list-panel__item">
+                            <a class="home-list-panel__link" href="{{ path('player_show', { id: player.id }) }}">
+                                <span class="home-list-panel__primary">{{ player.firstName }} {{ player.lastName }}</span>
+                                {% if player.number %}<span class="home-list-panel__meta">#{{ player.number }}</span>{% endif %}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="home-list-panel__empty">Aucun joueur</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="home-list-panel home-list-panel--fade home-list-panel--delay-2" aria-labelledby="home-teams-heading">
+                <header class="home-list-panel__head">
+                    <h2 id="home-teams-heading" class="home-list-panel__title">Équipes</h2>
+                    <a class="home-list-panel__more" href="{{ path('teams_index') }}">Tout voir</a>
+                </header>
+                <ul class="home-list-panel__list">
+                    {% for team in preview_teams %}
+                        <li class="home-list-panel__item">
+                            <a class="home-list-panel__link" href="{{ path('team_show', { id: team.id }) }}">
+                                {{ team.teamName }}
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="home-list-panel__empty">Aucune équipe</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="home-list-panel home-list-panel--fade home-list-panel--delay-3" aria-labelledby="home-matches-heading">
+                <header class="home-list-panel__head">
+                    <h2 id="home-matches-heading" class="home-list-panel__title">Matchs</h2>
+                    <a class="home-list-panel__more" href="{{ path('app_matches_index') }}">Tout voir</a>
+                </header>
+                <ul class="home-list-panel__list">
+                    {% for match in preview_matches %}
+                        <li class="home-list-panel__item">
+                            <a class="home-list-panel__link home-list-panel__link--multiline" href="{{ path('app_matches_show', { id: match.id }) }}">
+                                <span class="home-list-panel__primary">
+                                    {{ match.homeTeam ? match.homeTeam.teamName : '—' }}
+                                    <span aria-hidden="true"> — </span>
+                                    {{ match.awayTeam ? match.awayTeam.teamName : '—' }}
+                                </span>
+                                <span class="home-list-panel__meta">{{ match.date ? match.date|date('d/m/Y') : '' }} · {{ match.type }}</span>
+                            </a>
+                        </li>
+                    {% else %}
+                        <li class="home-list-panel__empty">Aucun match</li>
+                    {% endfor %}
+                </ul>
+            </section>
+        </div>
+    </main>
+{% endblock %}

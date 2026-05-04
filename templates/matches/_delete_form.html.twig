@@ -1,0 +1,4 @@
+<form method="post" action="{{ path('app_matches_delete', {'id': match.id}) }}" onsubmit="return confirm('Supprimer ce match ?');">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ match.id) }}">
+    <button type="submit" class="btn btn-outline-danger btn-sm">Supprimer</button>
+</form>

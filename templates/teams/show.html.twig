@@ -1,6 +1,39 @@
-<article>
-    <span>
-        Nom de l'équipe : {{ teams.teamName }} <br>
-    </span>
-    <a href="{{ path('teams_index') }}">Retourner à l'index</a>
-</article>
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ teams.teamName }}{% endblock %}
+
+{% block body %}
+    <h1>{{ teams.teamName }}</h1>
+    <p class="page-meta">Fiche équipe</p>
+
+    <section class="detail-panel" aria-label="Informations équipe">
+        <dl class="detail-list">
+            <dt>Nom de l’équipe</dt>
+            <dd>{{ teams.teamName }}</dd>
+            <dt>Responsable (compte)</dt>
+            <dd>
+                {% if teams.user %}
+                    {{ teams.user.userIdentifier }}
+                {% else %}
+                    —
+                {% endif %}
+            </dd>
+            <dt>Effectif</dt>
+            <dd>
+                {% set count = teams.players|length %}
+                {{ count }} joueur{{ count > 1 ? 's' : '' }}
+                {% if count > 0 %}
+                    · <a href="{{ path('players_index') }}">voir les joueurs</a>
+                {% endif %}
+            </dd>
+        </dl>
+    </section>
+
+    <p class="page-toolbar">
+        <a href="{{ path('team_update', { id: teams.id }) }}" class="btn btn-primary">Modifier</a>
+    </p>
+
+    <p class="page-toolbar page-toolbar--back">
+        <a href="{{ path('teams_index') }}">← Liste des équipes</a>
+    </p>
+{% endblock %}

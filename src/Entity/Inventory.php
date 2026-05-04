@@ -3,8 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\InventoryRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: InventoryRepository::class)]
@@ -21,16 +19,9 @@ class Inventory
     #[ORM\Column]
     private ?int $quantity = null;
 
-    /**
-     * @var Collection<int, Teams>
-     */
-    #[ORM\OneToMany(targetEntity: Teams::class, mappedBy: 'Inventory')]
-    private Collection $teams;
-
-    public function __construct()
-    {
-        $this->teams = new ArrayCollection();
-    }
+    #[ORM\ManyToOne(targetEntity: Teams::class, inversedBy: 'inventories')]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
+    private ?Teams $team = null;
 
     public function getId(): ?int
     {
@@ -61,32 +52,14 @@ class Inventory
         return $this;
     }
 
-    /**
-     * @return Collection<int, Teams>
-     */
-    public function getTeams(): Collection
+    public function getTeam(): ?Teams
     {
-        return $this->teams;
+        return $this->team;
     }
 
-    public function addTeam(Teams $team): static
+    public function setTeam(?Teams $team): static
     {
-        if (!$this->teams->contains($team)) {
-            $this->teams->add($team);
-            $team->setInventory($this);
-        }
-
-        return $this;
-    }
-
-    public function removeTeam(Teams $team): static
-    {
-        if ($this->teams->removeElement($team)) {
-            // set the owning side to null (unless already changed)
-            if ($team->getInventory() === $this) {
-                $team->setInventory(null);
-            }
-        }
+        $this->team = $team;
 
         return $this;
     }

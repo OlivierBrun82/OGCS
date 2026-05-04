@@ -1,0 +1,13 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier inventaire{% endblock %}
+
+{% block body %}
+    <h1>Modifier l’inventaire</h1>
+
+    {{ include('inventory/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+
+    <a href="{{ path('app_inventory_index') }}">Retour à la liste</a>
+
+    {{ include('inventory/_delete_form.html.twig') }}
+{% endblock %}

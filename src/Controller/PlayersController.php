@@ -75,12 +75,13 @@ final class PlayersController extends AbstractController
 
         return $this->render('players/update.html.twig', [
             'formPlayer' => $formPlayer,
+            'players' => $players,
         ]);
     }
 
     // Endpoint pour supprimer un joueur
     #[Route('/delete/{id}', name: 'player_delete', methods: ['POST'])]
-    public function delete(Players $players, Request $request, EntityManagerInterface $em): Response
+    public function delete(Players $players, Request $request, EntityManagerInterface $em)
 
     {
         if ($this->isCsrfTokenValid('delete' . $players->getId(), $request->request->get('_token')))

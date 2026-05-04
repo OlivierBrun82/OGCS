@@ -1,1 +1,17 @@
-{{ form(formTeam) }}
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier {{ teams.teamName }}{% endblock %}
+
+{% block body %}
+    <h1>Modifier l’équipe</h1>
+    <p class="page-meta">{{ teams.teamName }}</p>
+
+    <section class="detail-panel detail-panel--form" aria-label="Formulaire">
+        {{ form(formTeam) }}
+    </section>
+
+    <p class="page-toolbar mt-3">
+        <a href="{{ path('teams_index') }}" class="btn btn-secondary btn-sm">← Liste des équipes</a>
+        <a href="{{ path('team_show', { id: teams.id }) }}" class="btn btn-secondary btn-sm">Voir la fiche</a>
+    </p>
+{% endblock %}

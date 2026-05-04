@@ -16,6 +16,18 @@ class RatingsRepository extends ServiceEntityRepository
         parent::__construct($registry, Ratings::class);
     }
 
+    /**
+     * @return list<Ratings>
+     */
+    public function findAllRecentFirst(): array
+    {
+        return $this->createQueryBuilder('r')
+            ->orderBy('r.created_at', 'DESC')
+            ->addOrderBy('r.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     //    /**
     //     * @return Ratings[] Returns an array of Ratings objects
     //     */

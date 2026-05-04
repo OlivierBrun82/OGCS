@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes absences{% endblock %}
+
+{% block body %}
+    <h1>Mes absences (joueurs)</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Joueur</th>
+                <th>Motif</th>
+                <th>Du</th>
+                <th>Au</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for abscence in abscences %}
+            <tr>
+                <td>
+                    {% if abscence.players %}
+                        {{ abscence.players.firstName }} {{ abscence.players.lastName }}
+                    {% else %}
+                        —
+                    {% endif %}
+                </td>
+                <td>{{ abscence.motive }}</td>
+                <td>{{ abscence.absenceStart|date('d/m/Y') }}</td>
+                <td>{{ abscence.absenceEnd|date('d/m/Y') }}</td>
+                <td>
+                    <a href="{{ path('app_abscences_show', {'id': abscence.id}) }}">Voir</a>
+                    <a href="{{ path('app_abscences_edit', {'id': abscence.id}) }}">Modifier</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="5">Aucune absence enregistrée</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_abscences_new') }}">Ajouter une absence</a>
+{% endblock %}

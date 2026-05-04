@@ -1,0 +1,21 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouvelle absence{% endblock %}
+
+{% block body %}
+    <h1>Nouvelle absence</h1>
+
+    {% if preset_player is defined and preset_player %}
+        <p>Joueur : <strong>{{ abscence.players.firstName }} {{ abscence.players.lastName }}</strong></p>
+    {% endif %}
+
+    {{ include('abscences/_form.html.twig', {'button_label': 'Enregistrer'}) }}
+
+    <p>
+        <a href="{{ path('app_abscences_index') }}">Retour à la liste</a>
+        {% if preset_player is defined and preset_player %}
+            —
+            <a href="{{ path('player_show', {'id': abscence.players.id}) }}">Fiche joueur</a>
+        {% endif %}
+    </p>
+{% endblock %}

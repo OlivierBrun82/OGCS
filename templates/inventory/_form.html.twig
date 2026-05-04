@@ -1,0 +1,7 @@
+{{ form_start(form) }}
+    {{ form_errors(form) }}
+    {{ form_row(form.item_type) }}
+    {{ form_row(form.quantity) }}
+    {{ form_row(form.team) }}
+    <button class="btn btn-primary" type="submit">{{ button_label|default('Enregistrer') }}</button>
+{{ form_end(form) }}

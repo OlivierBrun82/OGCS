@@ -13,11 +13,10 @@ services:
     environment:
       APP_ENV: dev
       DATABASE_URL: "mysql://app:root@database:3306/ogcs?serverVersion=8.0&charset=utf8"
-    # Serveur PHP : si public/assets existe (suite à asset-map:compile), php -S sert ces
-    # fichiers en BYPASS Symfony → ancien CSS figé et souvent Content-Type: text/html sur .css :
-    # le navigateur n’applique pas les changements ni les correctifs (ex. menu burger).
-    # Au démarrage on vide public/assets pour que /assets/* soit toujours géré par Symfony.
-    command: sh -c "rm -rf public/assets && exec php -S 0.0.0.0:8000 -t public public/index.php"
+    # On vide public/assets au démarrage pour éviter les artefacts compilés en dev,
+    # puis on laisse le serveur intégré servir correctement les fichiers statiques
+    # (uploads/images/css/js) depuis public/.
+    command: sh -c "rm -rf public/assets && exec php -S 0.0.0.0:8000 -t public"
     ports:
       # hôte:conteneur — le serveur intégré écoute sur 8000 dans l’image
       - "8005:8000"

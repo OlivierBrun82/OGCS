@@ -6,6 +6,10 @@
     <h1>Page des joueurs</h1>
 {% for players in players %}
     <article>
+        {% set photoUrl = vich_uploader_asset(players, 'photoFile') %}
+        {% if photoUrl %}
+            <img src="{{ photoUrl }}" alt="" width="64" height="64" loading="lazy" decoding="async" class="player-photo player-photo--thumb">
+        {% endif %}
         <h2>{{players.firstname}} {{players.lastname}}</h2>
         <span>Maillot : {{players.number}}</span> <br>
         <span>Équipe : {{players.teams.teamName}}</span> <br>

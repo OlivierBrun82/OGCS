@@ -10,32 +10,28 @@
         <dl class="detail-list">
             <dt>Nom de l’équipe</dt>
             <dd>{{ teams.teamName }}</dd>
-            <dt>Responsable (compte)</dt>
-            <dd>
-                {% if teams.user %}
-                    {{ teams.user.userIdentifier }}
-                {% else %}
-                    —
-                {% endif %}
-            </dd>
+            
             <dt>Effectif</dt>
             <dd>
                 {% set count = teams.players|length %}
                 {{ count }} joueur{{ count > 1 ? 's' : '' }}
                 {% if count > 0 %}
-                    · <a href="{{ path('players_index') }}">voir les joueurs</a>
                 {% endif %}
             </dd>
+            <dt>Joueurs</dt>
+            {% for player in teams.players %}
+                <span>{{ player.firstName }} <br> {{ player.lastName }} ({{ player.number }})</span> <br>
+            {% endfor %}            
         </dl>
     </section>
 
-    <p class="page-toolbar">
+    <div class="page-toolbar">
         <form method="get" action="{{ path('team_update', { id: teams.id }) }}">
             <button type="submit" class="btn btn-primary">Modifier</button>
         </form>
-    </p>
+    </div>
 
-    <p class="page-toolbar page-toolbar--back">
+    <div class="page-toolbar page-toolbar--back">
         <a href="{{ path('teams_index') }}">← Liste des équipes</a>
-    </p>
+    </div>
 {% endblock %}

@@ -7,6 +7,21 @@
     <p class="page-meta">Fiche joueur · maillot {% if players.number is not null %}#{{ players.number }}{% else %}non attribué{% endif %}</p>
 
     <section class="detail-panel" aria-label="Informations joueur">
+        {% set photoUrl = vich_uploader_asset(players, 'photoFile') %}
+        {% if photoUrl %}
+            <figure class="player-photo player-photo--detail player-photo--in-panel" aria-label="Photo du joueur">
+                <img
+                    src="{{ asset(photoUrl) }}"
+                    alt="Photo de {{ players.firstName }} {{ players.lastName }}"
+                    width="320"
+                    height="320"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                    class="player-photo__img"
+                >
+            </figure>
+        {% endif %}
         <dl class="detail-list">
             <dt>Prénom</dt>
             <dd>{{ players.firstName }}</dd>
@@ -35,16 +50,16 @@
         </dl>
     </section>
 
-    <p class="page-toolbar">
+    <div class="page-toolbar page-toolbar--player-actions">
         <form method="get" action="{{ path('player_update', { id: players.id }) }}">
             <button type="submit" class="btn btn-primary">Modifier</button>
         </form>
         <form method="get" action="{{ path('app_abscences_new_for_player', { player: players.id }) }}">
             <button type="submit" class="btn btn-secondary">Ajouter une absence</button>
         </form>
-    </p>
+    </div>
 
-    <p class="page-toolbar page-toolbar--back">
+    <div class="page-toolbar page-toolbar--back">
         <a href="{{ path('players_index') }}">← Liste des joueurs</a>
-    </p>
+    </div>
 {% endblock %}

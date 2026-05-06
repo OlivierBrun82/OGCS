@@ -7,12 +7,17 @@ use App\Enum\PlayerStatut;
 use App\Repository\PlayersRepository;
 use App\Validator\Constraints\MaxPlayersPerTeam;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Vich\UploaderBundle\FileAbstraction\ReplacingFile;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: PlayersRepository::class)]
 #[MaxPlayersPerTeam(max: 11)]
+#[Vich\Uploadable]
 class Players
 {
     #[ORM\Id]
@@ -49,6 +54,15 @@ class Players
 
     #[ORM\ManyToOne(inversedBy: 'players')]
     private ?Teams $Teams = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photoName = null;
+
+    #[Vich\UploadableField(mapping: 'player_photos', fileNameProperty: 'photoName')]
+    private ?File $photoFile = null;
+
+    #[ORM\Column(type: Types::DATETIME_IMMUTABLE, nullable: true)]
+    private ?\DateTimeImmutable $updatedAt = null;
 
     /**
      * Notes reçues par ce joueur.
@@ -201,6 +215,44 @@ class Players
     public function setTeams(?Teams $Teams): static
     {
         $this->Teams = $Teams;
+
+        return $this;
+    }
+
+    public function getPhotoName(): ?string
+    {
+        return $this->photoName;
+    }
+
+    public function setPhotoName(?string $photoName): static
+    {
+        $this->photoName = $photoName;
+
+        return $this;
+    }
+
+    public function setPhotoFile(?File $photoFile = null): void
+    {
+        $this->photoFile = $photoFile;
+
+        if ($photoFile instanceof UploadedFile || $photoFile instanceof ReplacingFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+    }
+
+    public function getPhotoFile(): ?File
+    {
+        return $this->photoFile;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(?\DateTimeImmutable $updatedAt): static
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }

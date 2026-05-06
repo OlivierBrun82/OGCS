@@ -21,10 +21,10 @@ final class AbscencesController extends AbstractController
     #[Route(name: 'app_abscences_index', methods: ['GET'])]
     public function index(AbscencesRepository $abscencesRepository): Response
     {
-        $user = $this->requireUser();
+        $this->requireUser();
 
         return $this->render('abscences/index.html.twig', [
-            'abscences' => $abscencesRepository->findForCoach($user),
+            'abscences' => $abscencesRepository->findAllOrderedForListing(),
         ]);
     }
 
@@ -72,7 +72,7 @@ final class AbscencesController extends AbstractController
     #[Route('/{id}', name: 'app_abscences_show', methods: ['GET'], requirements: ['id' => '\\d+'])]
     public function show(Abscences $abscence): Response
     {
-        $this->denyUnlessOwner($abscence, $this->requireUser());
+        $this->requireUser();
 
         return $this->render('abscences/show.html.twig', [
             'abscence' => $abscence,

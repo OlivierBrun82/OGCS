@@ -7,7 +7,10 @@
     <p class="page-meta">{{ players.firstName }} {{ players.lastName }}</p>
 
     <section class="detail-panel detail-panel--form" aria-label="Formulaire joueur">
-        {{ form(formPlayer) }}
+        {{ form_start(formPlayer, { attr: { enctype: 'multipart/form-data' } }) }}
+            {{ form_errors(formPlayer) }}
+            {{ form_widget(formPlayer) }}
+        {{ form_end(formPlayer) }}
     </section>
 
     <section class="detail-panel detail-panel--form mt-4" aria-label="Ma note pour ce joueur">
@@ -27,10 +30,10 @@
         {{ form_end(coachRatingForm) }}
     </section>
 
-    <p class="page-toolbar mt-3">
+    <div class="page-toolbar mt-3">
         <a href="{{ path('players_index') }}" class="btn btn-secondary btn-sm">← Liste des joueurs</a>
         <form method="get" action="{{ path('player_show', { id: players.id }) }}">
             <button type="submit" class="btn btn-outline-secondary btn-sm">Voir la fiche</button>
         </form>
-    </p>
+    </div>
 {% endblock %}

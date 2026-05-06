@@ -26,6 +26,10 @@
                 <td>du {{ abscence.absenceStart|date('d/m/Y') }} au {{ abscence.absenceEnd|date('d/m/Y') }}</td>
             </tr>
             <tr>
+                <th>Enregistré par</th>
+                <td>{{ abscence.user ? abscence.user.email : '—' }}</td>
+            </tr>
+            <tr>
                 <th>Enregistré le</th>
                 <td>{{ abscence.createdAt ? abscence.createdAt|date('d/m/Y H:i') : '' }}</td>
             </tr>
@@ -40,7 +44,9 @@
         {% endif %}
     </p>
 
-    <a href="{{ path('app_abscences_edit', {'id': abscence.id}) }}">Modifier</a>
+    {% if abscence.user and app.user and abscence.user.id == app.user.id %}
+        <a href="{{ path('app_abscences_edit', {'id': abscence.id}) }}">Modifier</a>
 
-    {{ include('abscences/_delete_form.html.twig') }}
+        {{ include('abscences/_delete_form.html.twig') }}
+    {% endif %}
 {% endblock %}

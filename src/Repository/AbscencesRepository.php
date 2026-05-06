@@ -3,7 +3,6 @@
 namespace App\Repository;
 
 use App\Entity\Abscences;
-use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -18,13 +17,15 @@ class AbscencesRepository extends ServiceEntityRepository
     }
 
     /**
+     * Toutes les absences, visibles par tout coach connecté (évite les requêtes N+1 sur user / joueur).
+     *
      * @return list<Abscences>
      */
-    public function findForCoach(User $coach): array
+    public function findAllOrderedForListing(): array
     {
         return $this->createQueryBuilder('a')
-            ->andWhere('a.user = :coach')
-            ->setParameter('coach', $coach)
+            ->leftJoin('a.user', 'u')->addSelect('u')
+            ->leftJoin('a.players', 'p')->addSelect('p')
             ->orderBy('a.absence_start', 'DESC')
             ->addOrderBy('a.id', 'DESC')
             ->getQuery()

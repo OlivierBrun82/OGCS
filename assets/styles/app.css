@@ -534,6 +534,7 @@ body.site-nav-no-scroll {
     font-size: 0.9375rem;
 }
 
+/* Barres d’action : utiliser un <div> si des <form> sont enfants (<p> + <form> est invalide → le DOM est corrigé et flex gap est perdu). */
 .page-toolbar {
     display: flex;
     flex-wrap: wrap;
@@ -544,6 +545,43 @@ body.site-nav-no-scroll {
 
 .page-shell .page-toolbar form {
     margin: 0;
+}
+
+/* Fiche joueur : garder une marge lisible entre « Modifier » et « Ajouter une absence » */
+.page-shell .page-toolbar--player-actions {
+    gap: 0.875rem 1.5rem;
+}
+
+.player-photo--detail {
+    margin-bottom: 1rem;
+}
+
+.player-photo--in-panel {
+    text-align: center;
+}
+
+.player-photo--in-panel .player-photo__img {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.player-photo__img {
+    max-width: min(320px, 100%);
+    height: auto;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    object-fit: cover;
+    aspect-ratio: 1;
+}
+
+.player-photo--thumb {
+    display: block;
+    width: 64px;
+    height: 64px;
+    margin-bottom: 0.6rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    object-fit: cover;
 }
 
 .page-shell article .article-actions {

@@ -16,6 +16,8 @@
 
 ###> symfony/asset-mapper ###
 /public/assets/
+/public/uploads/player-photos/*
+!/public/uploads/player-photos/.gitignore
 /assets/vendor/
 ###< symfony/asset-mapper ###
 

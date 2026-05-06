@@ -20,8 +20,8 @@
         {% for m in messages %}
             <tr>
                 <td>{{ m.sender.email }}</td>
-                <td>{{ m.sentAt|date('d/m/Y H:i') }}</td>
-                <td>{{ m.readAt ? 'Oui (' ~ m.readAt|date('d/m/Y H:i') ~ ')' : 'Non' }}</td>
+                <td>{{ m.sentAt|date('d/m/Y H:i', 'Europe/Paris') }}</td>
+                <td>{{ m.readAt ? 'Oui (' ~ m.readAt|date('d/m/Y H:i', 'Europe/Paris') ~ ')' : 'Non' }}</td>
                 <td><a href="{{ path('app_messages_show', {'id': m.id}) }}">Voir</a></td>
             </tr>
         {% else %}

@@ -1,9 +1,9 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mes absences{% endblock %}
+{% block title %}Absences{% endblock %}
 
 {% block body %}
-    <h1>Mes absences (joueurs)</h1>
+    <h1>Absences des joueurs</h1>
 
     <table class="table">
         <thead>
@@ -12,6 +12,7 @@
                 <th>Motif</th>
                 <th>Du</th>
                 <th>Au</th>
+                <th>Enregistré par</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -28,14 +29,17 @@
                 <td>{{ abscence.motive }}</td>
                 <td>{{ abscence.absenceStart|date('d/m/Y') }}</td>
                 <td>{{ abscence.absenceEnd|date('d/m/Y') }}</td>
+                <td>{{ abscence.user ? abscence.user.email : '—' }}</td>
                 <td>
                     <a href="{{ path('app_abscences_show', {'id': abscence.id}) }}">Voir</a>
-                    <a href="{{ path('app_abscences_edit', {'id': abscence.id}) }}">Modifier</a>
+                    {% if abscence.user and app.user and abscence.user.id == app.user.id %}
+                        <a href="{{ path('app_abscences_edit', {'id': abscence.id}) }}">Modifier</a>
+                    {% endif %}
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="5">Aucune absence enregistrée</td>
+                <td colspan="6">Aucune absence enregistrée</td>
             </tr>
         {% endfor %}
         </tbody>

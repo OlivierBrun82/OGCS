@@ -5,34 +5,20 @@
     {{ form_row(form.homeTeam) }}
     {{ form_row(form.awayTeam) }}
 
-    {{ form_label(form.compositions) }}
-    {{ form_help(form.compositions) }}
-    {{ form_errors(form.compositions) }}
-    {{ form_widget(form.compositions) }}
-    <button type="button" class="btn btn-outline-secondary btn-sm mb-3" id="match-compositions-add">
-        Ajouter un joueur à la composition
-    </button>
+    {% set compositions_count = form.compositions|length %}
+    <div class="composition-collection-shell" {{ stimulus_controller('match-composition-collection', { nextIndex: compositions_count }) }}>
+        {{ form_label(form.compositions) }}
+        {{ form_help(form.compositions) }}
+        {{ form_errors(form.compositions) }}
+        {{ form_widget(form.compositions, {
+            attr: { 'data-match-composition-collection-target': 'holder' },
+        }) }}
+        <button type="button"
+            class="btn btn-outline-secondary btn-sm mb-3"
+            data-action="click->match-composition-collection#add">
+            Ajouter un joueur à la composition
+        </button>
+    </div>
 
     <button class="btn btn-primary">{{ button_label|default('Enregistrer') }}</button>
 {{ form_end(form) }}
-
-<script>
-(function () {
-  {# Symfony génère l’id du champ collection (ex. match_compositions), pas match-compositions #}
-  var holder = document.getElementById({{ form.compositions.vars.id|json_encode|raw }});
-  var btn = document.getElementById('match-compositions-add');
-  if (!holder || !btn) {
-    return;
-  }
-  var proto = holder.getAttribute('data-prototype');
-  if (!proto) {
-    return;
-  }
-  var index = {{ form.compositions|length }};
-  btn.addEventListener('click', function () {
-    var html = proto.replace(/__name__/g, String(index));
-    holder.insertAdjacentHTML('beforeend', html);
-    index++;
-  });
-})();
-</script>

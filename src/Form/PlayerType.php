@@ -12,6 +12,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class PlayerType extends AbstractType
 {
@@ -69,7 +70,17 @@ class PlayerType extends AbstractType
                 'required' => true,
                 'choice_label' => 'team_name',
                 'placeholder' => 'Choisir une équipe',
-            ])  
+            ])
+            ->add('photoFile', VichImageType::class, [
+                'label' => 'Photo du joueur',
+                'required' => false,
+                'allow_delete' => true,
+                'download_uri' => true,
+                'image_uri' => true,
+                'attr' => [
+                    'accept' => 'image/jpeg,image/png,image/webp,image/gif',
+                ],
+            ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Envoyer',
                 'attr' => [

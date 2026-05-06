@@ -30,7 +30,9 @@
     </section>
 
     <p class="page-toolbar">
-        <a href="{{ path('team_update', { id: teams.id }) }}" class="btn btn-primary">Modifier</a>
+        <form method="get" action="{{ path('team_update', { id: teams.id }) }}">
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
     </p>
 
     <p class="page-toolbar page-toolbar--back">

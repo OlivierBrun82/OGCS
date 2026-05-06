@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Teams;
 use App\Form\TeamType;
+use App\Repository\MatchesRepository;
 use App\Repository\TeamsRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -16,10 +17,12 @@ final class TeamsController extends AbstractController
 {
     // Endpoint pour afficher toutes les équipes
     #[Route('/', name: 'teams_index')]
-    public function index(TeamsRepository $teamsRepository): Response
+    public function index(TeamsRepository $teamsRepository, MatchesRepository $matchesRepository): Response
     {
         return $this->render('teams/index.html.twig', [
             'teams' => $teamsRepository->findAll(),
+            'teamIdsReferencedInMatches' => $matchesRepository->findReferencedTeamIds(),
+            'teamIdsWithPlayers' => $teamsRepository->findIdsWithAtLeastOnePlayer(),
         ]);
     }
 
@@ -76,12 +79,30 @@ final class TeamsController extends AbstractController
     #[Route('/delete/{id}', name: 'team_delete', methods: ['POST'])]
     public function delete(Teams $teams, Request $request, EntityManagerInterface $em): Response
     {
-        if ($this->isCsrfTokenValid('delete' . $teams->getId(), $request->request->get('_token'))) {
-            $em->remove($teams);
-            $em->flush();
+        if (!$this->isCsrfTokenValid('delete' . $teams->getId(), $request->request->get('_token'))) {
+            return $this->redirectToRoute('teams_index');
+        }
+
+        if (!$teams->getHomeMatches()->isEmpty() || !$teams->getAwayMatches()->isEmpty()) {
+            $this->addFlash(
+                'warning',
+                'Impossible de supprimer cette équipe : elle est utilisée dans un ou plusieurs matchs.',
+            );
 
             return $this->redirectToRoute('teams_index');
         }
+
+        if (!$teams->getPlayers()->isEmpty()) {
+            $this->addFlash(
+                'warning',
+                'Impossible de supprimer cette équipe : retirez d\'abord les joueurs rattachés.',
+            );
+
+            return $this->redirectToRoute('teams_index');
+        }
+
+        $em->remove($teams);
+        $em->flush();
 
         return $this->redirectToRoute('teams_index');
     }

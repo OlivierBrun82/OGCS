@@ -13,6 +13,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 #[ORM\Entity(repositoryClass: MatchesRepository::class)]
 #[Assert\Callback('validateTeams')]
 #[Assert\Callback('validateCompositionPlayerUniqueness')]
+#[Assert\Callback('validateScores')]
 class Matches
 {
     #[ORM\Id]
@@ -38,6 +39,14 @@ class Matches
     #[ORM\ManyToOne(inversedBy: 'awayMatches')]
     #[ORM\JoinColumn(nullable: false, onDelete: 'RESTRICT')]
     private ?Teams $awayTeam = null;
+
+    #[Assert\GreaterThanOrEqual(0)]
+    #[ORM\Column(nullable: true)]
+    private ?int $homeScore = null;
+
+    #[Assert\GreaterThanOrEqual(0)]
+    #[ORM\Column(nullable: true)]
+    private ?int $awayScore = null;
 
     /**
      * @var Collection<int, Blames>
@@ -96,6 +105,22 @@ class Matches
                 }
             }
             $seen[] = $player;
+        }
+    }
+
+    public function validateScores(ExecutionContextInterface $context): void
+    {
+        $home = $this->homeScore;
+        $away = $this->awayScore;
+        if ($home !== null && $away === null) {
+            $context->buildViolation('Renseignez aussi le score de l\'équipe à l\'extérieur (ou videz le score domicile).')
+                ->atPath('awayScore')
+                ->addViolation();
+        }
+        if ($away !== null && $home === null) {
+            $context->buildViolation('Renseignez aussi le score de l\'équipe à domicile (ou videz le score extérieur).')
+                ->atPath('homeScore')
+                ->addViolation();
         }
     }
 
@@ -160,6 +185,30 @@ class Matches
     public function setAwayTeam(?Teams $awayTeam): static
     {
         $this->awayTeam = $awayTeam;
+
+        return $this;
+    }
+
+    public function getHomeScore(): ?int
+    {
+        return $this->homeScore;
+    }
+
+    public function setHomeScore(?int $homeScore): static
+    {
+        $this->homeScore = $homeScore;
+
+        return $this;
+    }
+
+    public function getAwayScore(): ?int
+    {
+        return $this->awayScore;
+    }
+
+    public function setAwayScore(?int $awayScore): static
+    {
+        $this->awayScore = $awayScore;
 
         return $this;
     }

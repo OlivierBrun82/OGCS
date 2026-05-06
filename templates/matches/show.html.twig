@@ -24,6 +24,17 @@
                 <td>{{ match.awayTeam ? match.awayTeam.teamName : '—' }}</td>
             </tr>
             <tr>
+                <th>Score</th>
+                <td>
+                    {% if match.homeScore is not null and match.awayScore is not null %}
+                        <strong>{{ match.homeScore }}</strong><span aria-hidden="true"> – </span><strong>{{ match.awayScore }}</strong>
+                        <span class="text-muted">(domicile – extérieur)</span>
+                    {% else %}
+                        <span class="text-muted">Non renseigné</span>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
                 <th>Type</th>
                 <td>{{ match.type }}</td>
             </tr>

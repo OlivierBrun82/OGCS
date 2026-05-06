@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -41,6 +42,17 @@ class MatchesType extends AbstractType
                 'label' => 'Équipe extérieure',
                 'choice_label' => 'team_name',
                 'placeholder' => '—',
+            ])
+            ->add('homeScore', IntegerType::class, [
+                'label' => 'Score équipe à domicile',
+                'required' => false,
+                'attr' => ['min' => 0],
+                'help' => 'Laissez vide si le match n’a pas encore de résultat. Les deux scores doivent être renseignés ensemble.',
+            ])
+            ->add('awayScore', IntegerType::class, [
+                'label' => 'Score équipe extérieure',
+                'required' => false,
+                'attr' => ['min' => 0],
             ])
             ->add('compositions', CollectionType::class, [
                 'label' => 'Composition (feuille de match)',

@@ -61,7 +61,12 @@
                                     <span aria-hidden="true"> — </span>
                                     {{ match.awayTeam ? match.awayTeam.teamName : '—' }}
                                 </span>
-                                <span class="home-list-panel__meta">{{ match.date ? match.date|date('d/m/Y') : '' }} · {{ match.type }}</span>
+                                <span class="home-list-panel__meta">
+                                    {{ match.date ? match.date|date('d/m/Y') : '' }} · {{ match.type }}
+                                    {% if match.homeScore is not null and match.awayScore is not null %}
+                                        · Score {{ match.homeScore }}–{{ match.awayScore }}
+                                    {% endif %}
+                                </span>
                             </a>
                         </li>
                     {% else %}

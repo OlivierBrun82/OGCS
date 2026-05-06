@@ -20,12 +20,12 @@
         <script src="https://cdn.jsdelivr.net/npm/frankenphp-hot-reload/+esm" type="module"></script>
         {% endif %}
     </head>
-    <body>
+    <body data-controller="site-nav">
         {% set r = app.request.attributes.get('_route')|default('') %}
+        {# Backdrop hors du header : évite backdrop-filter sur .site-header qui piège les position:fixed (menu derrière .page-shell). #}
+        <div class="site-nav__backdrop" data-site-nav-target="backdrop" data-action="click->site-nav#close" aria-hidden="true"></div>
         {% block header %}
-            <header class="site-header" data-controller="site-nav">
-                <div class="site-nav__backdrop" data-site-nav-target="backdrop" data-action="click->site-nav#close" aria-hidden="true"></div>
-
+            <header class="site-header">
                 <div class="site-header__inner">
                     <a class="site-brand" href="{{ path('app_home') }}">OGCS</a>
 
@@ -58,6 +58,11 @@
             </header>
         {% endblock %}
         <div class="page-shell">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="site-flash site-flash--{{ label }}" role="status">{{ message }}</div>
+                {% endfor %}
+            {% endfor %}
             {% block body %}
             {% endblock %}
         </div>

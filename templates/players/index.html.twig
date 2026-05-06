@@ -7,13 +7,29 @@
 {% for players in players %}
     <article>
         <h2>{{players.firstname}} {{players.lastname}}</h2>
-        <span>{{players.number}}</span>
-        <a href="{{ path ('player_show', {id : players.id})}}">Voir le joueur{{players.firstname}} {{players.lastname}}</a>
-        <a href="{{path ('player_update', {id : players.id})}}">Modifier le joueur{{players.firstname}} {{players.lastname}}</a>
-        <form action="{{path ('player_delete', {id : players.id})}}" method="POST">
-            <input type="hidden" name="_token" value="{{csrf_token('delete' ~ players.id)}}">
-            <button type="submit" class="btn btn-danger">Supprimer le joueur {{players.firstname}} {{players.lastname}}</button>
-        </form>
+        <span>Maillot : {{players.number}}</span> <br>
+        <span>Équipe : {{players.teams.teamName}}</span> <br>
+        <span>Statut : {{players.statut.value}}</span> <br>
+        <span>Catégorie : {{players.categorie.value}}</span> <br>
+        <span>Note :
+            {% if coachRatingsByPlayerId[players.id] is defined %}
+                <strong>{{ coachRatingsByPlayerId[players.id] }}</strong> / 10
+            {% else %}
+                <span class="text-muted">Pas encore notée</span>
+            {% endif %}
+        </span> <br>
+        <div class="article-actions">
+            <form method="get" action="{{ path('player_show', { id: players.id }) }}">
+                <button type="submit" class="btn btn-secondary btn-sm">Voir </button>
+            </form>
+            <form method="get" action="{{ path('player_update', { id: players.id }) }}">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Modifier</button>
+            </form>
+            <form action="{{ path('player_delete', { id: players.id }) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ players.id) }}">
+                <button type="submit" class="btn btn-danger btn-sm">Supprimer</button>
+            </form>
+        </div>
     </article>
 {% endfor %}
 <p class="page-toolbar"><a href="{{ path('player_new') }}" class="btn btn-primary">Créer un joueur</a></p>

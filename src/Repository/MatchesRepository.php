@@ -28,6 +28,33 @@ class MatchesRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Identifiants d'équipes présents au moins une fois comme domicile ou extérieur.
+     *
+     * @return list<int>
+     */
+    public function findReferencedTeamIds(): array
+    {
+        $homeRows = $this->createQueryBuilder('m')
+            ->select('IDENTITY(m.homeTeam) AS id')
+            ->getQuery()
+            ->getScalarResult();
+
+        $awayRows = $this->createQueryBuilder('m')
+            ->select('IDENTITY(m.awayTeam) AS id')
+            ->getQuery()
+            ->getScalarResult();
+
+        $ids = array_merge(
+            array_column($homeRows, 'id'),
+            array_column($awayRows, 'id'),
+        );
+
+        $ids = array_filter($ids, static fn ($id) => null !== $id && '' !== $id);
+
+        return array_values(array_unique(array_map(static fn ($id): int => (int) $id, $ids)));
+    }
+
 //    /**
 //     * @return Matches[] Returns an array of Matches objects
 //     */

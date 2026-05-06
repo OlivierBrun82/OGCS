@@ -29,6 +29,7 @@ final class RatingsController extends AbstractController
     public function new(
         Request $request,
         EntityManagerInterface $em,
+        RatingsRepository $ratingsRepository,
     ): Response {
         $user = $this->getUser();
         if (!$user instanceof User) {
@@ -36,10 +37,24 @@ final class RatingsController extends AbstractController
         }
 
         $rating = new Ratings();
+        $rating->setCoach($user);
         $form = $this->createForm(RatingsType::class, $rating);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            $player = $rating->getPlayer();
+            $existing = $player !== null
+                ? $ratingsRepository->findOneByCoachAndPlayer($user, $player)
+                : null;
+
+            if ($existing !== null) {
+                $existing->setRating($rating->getRating());
+                $existing->setMessage($rating->getMessage());
+                $em->flush();
+
+                return $this->redirectToRoute('players_ratings_show', ['id' => $existing->getId()], Response::HTTP_SEE_OTHER);
+            }
+
             $rating->setCoach($user);
             $em->persist($rating);
             $em->flush();

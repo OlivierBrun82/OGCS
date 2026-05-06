@@ -7,12 +7,34 @@
 {% for teams in teams %}
     <article>
         <h2>{{ teams.teamName }}</h2>
-        <a href="{{ path('team_show', { id: teams.id }) }}">Voir l'équipe {{ teams.teamName }}</a>
-        <a href="{{ path('team_update', { id: teams.id }) }}">Modifier l'équipe {{ teams.teamName }}</a>
-        <form action="{{ path('team_delete', { id: teams.id }) }}" method="POST">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ teams.id) }}">
-            <button type="submit" class="btn btn-danger">Supprimer l'équipe {{ teams.teamName }}</button>
-        </form>
+        <div class="article-actions">
+            <form method="get" action="{{ path('team_show', { id: teams.id }) }}">
+                <button type="submit" class="btn btn-secondary btn-sm">Voir</button>
+            </form>
+            <form method="get" action="{{ path('team_update', { id: teams.id }) }}">
+                <button type="submit" class="btn btn-outline-secondary btn-sm">Modifier</button>
+            </form>
+            {% set inMatch = teams.id in teamIdsReferencedInMatches %}
+            {% set hasPlayers = teams.id in teamIdsWithPlayers %}
+            {% set cannotDelete = inMatch or hasPlayers %}
+            {% if cannotDelete %}
+                {% set deleteReasons = [] %}
+                {% if inMatch %}
+                    {% set deleteReasons = deleteReasons|merge(['équipe présente dans un ou plusieurs matchs']) %}
+                {% endif %}
+                {% if hasPlayers %}
+                    {% set deleteReasons = deleteReasons|merge(['équipe contenant encore des joueurs']) %}
+                {% endif %}
+                {% set deleteTitle = 'Impossible de supprimer : ' ~ deleteReasons|join(' ; ') ~ '.' %}
+            {% endif %}
+            <form action="{{ path('team_delete', { id: teams.id }) }}" method="POST">
+                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ teams.id) }}">
+                <button type="submit"
+                    class="btn btn-danger btn-sm"
+                    {% if cannotDelete %}disabled title="{{ deleteTitle }}" aria-disabled="true"{% endif %}
+                >Supprimer</button>
+            </form>
+        </div>
     </article>
 {% endfor %}
 <p class="page-toolbar"><a href="{{ path('team_new') }}" class="btn btn-primary">Créer une équipe</a></p>

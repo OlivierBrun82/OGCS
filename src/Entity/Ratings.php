@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: RatingsRepository::class)]
+#[ORM\Table(uniqueConstraints: [new ORM\UniqueConstraint(name: 'uniq_rating_coach_player', columns: ['coach_id', 'player_id'])])]
 #[ORM\HasLifecycleCallbacks]
 class Ratings
 {

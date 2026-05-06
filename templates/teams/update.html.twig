@@ -12,6 +12,8 @@
 
     <p class="page-toolbar mt-3">
         <a href="{{ path('teams_index') }}" class="btn btn-secondary btn-sm">← Liste des équipes</a>
-        <a href="{{ path('team_show', { id: teams.id }) }}" class="btn btn-secondary btn-sm">Voir la fiche</a>
+        <form method="get" action="{{ path('team_show', { id: teams.id }) }}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Voir la fiche</button>
+        </form>
     </p>
 {% endblock %}

@@ -6,12 +6,31 @@
     <h1>Modifier le joueur</h1>
     <p class="page-meta">{{ players.firstName }} {{ players.lastName }}</p>
 
-    <section class="detail-panel detail-panel--form" aria-label="Formulaire">
+    <section class="detail-panel detail-panel--form" aria-label="Formulaire joueur">
         {{ form(formPlayer) }}
+    </section>
+
+    <section class="detail-panel detail-panel--form mt-4" aria-label="Ma note pour ce joueur">
+        <h2 class="h5">Ma note (coach)</h2>
+        <p class="text-muted small mb-3">Une seule note par joueur pour votre compte. Sélectionnez 1 à 10 étoiles.</p>
+
+        {% set coachRating = coachRatingForm.vars.value %}
+        {% if coachRating.id %}
+            <p class="text-muted small mb-3">Enregistrée le {{ coachRating.createdAt|date('d/m/Y H:i') }}.</p>
+        {% endif %}
+
+        {{ form_start(coachRatingForm, { attr: { class: 'coach-rating-form' } }) }}
+            {{ form_errors(coachRatingForm) }}
+            {{ form_row(coachRatingForm.rating) }}
+            {{ form_row(coachRatingForm.message) }}
+            <button type="submit" class="btn btn-primary">Enregistrer ma note</button>
+        {{ form_end(coachRatingForm) }}
     </section>
 
     <p class="page-toolbar mt-3">
         <a href="{{ path('players_index') }}" class="btn btn-secondary btn-sm">← Liste des joueurs</a>
-        <a href="{{ path('player_show', { id: players.id }) }}" class="btn btn-secondary btn-sm">Voir la fiche</a>
+        <form method="get" action="{{ path('player_show', { id: players.id }) }}">
+            <button type="submit" class="btn btn-outline-secondary btn-sm">Voir la fiche</button>
+        </form>
     </p>
 {% endblock %}

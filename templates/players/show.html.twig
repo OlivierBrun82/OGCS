@@ -36,8 +36,12 @@
     </section>
 
     <p class="page-toolbar">
-        <a href="{{ path('player_update', { id: players.id }) }}" class="btn btn-primary">Modifier</a>
-        <a href="{{ path('app_abscences_new_for_player', { player: players.id }) }}" class="btn btn-secondary">Ajouter une absence</a>
+        <form method="get" action="{{ path('player_update', { id: players.id }) }}">
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </form>
+        <form method="get" action="{{ path('app_abscences_new_for_player', { player: players.id }) }}">
+            <button type="submit" class="btn btn-secondary">Ajouter une absence</button>
+        </form>
     </p>
 
     <p class="page-toolbar page-toolbar--back">

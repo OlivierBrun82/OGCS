@@ -11,6 +11,7 @@
                 <th>Id</th>
                 <th>Date</th>
                 <th>Domicile</th>
+                <th>Score</th>
                 <th>Extérieur</th>
                 <th>Type</th>
                 <th>Lieu</th>
@@ -23,17 +24,30 @@
                 <td>{{ match.id }}</td>
                 <td>{{ match.date ? match.date|date('Y-m-d') : '' }}</td>
                 <td>{{ match.homeTeam ? match.homeTeam.teamName : '—' }}</td>
+                <td>
+                    {% if match.homeScore is not null and match.awayScore is not null %}
+                        {{ match.homeScore }} – {{ match.awayScore }}
+                    {% else %}
+                        <span class="text-muted">—</span>
+                    {% endif %}
+                </td>
                 <td>{{ match.awayTeam ? match.awayTeam.teamName : '—' }}</td>
                 <td>{{ match.type }}</td>
                 <td>{{ match.location }}</td>
                 <td>
-                    <a href="{{ path('app_matches_show', {'id': match.id}) }}">voir</a>
-                    <a href="{{ path('app_matches_edit', {'id': match.id}) }}">modifier</a>
+                    <div class="table-actions">
+                        <form method="get" action="{{ path('app_matches_show', { id: match.id }) }}">
+                            <button type="submit" class="btn btn-secondary btn-sm">Voir</button>
+                        </form>
+                        <form method="get" action="{{ path('app_matches_edit', { id: match.id }) }}">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">Modifier</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="7">Aucun match</td>
+                <td colspan="8">Aucun match</td>
             </tr>
         {% endfor %}
         </tbody>

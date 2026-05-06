@@ -15,22 +15,25 @@ class RatingsType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-        $builder
-            ->add('player', EntityType::class, [
+        if (!$options['hide_player']) {
+            $builder->add('player', EntityType::class, [
                 'class' => Players::class,
                 'label' => 'Joueur',
                 'choice_label' => fn (Players $p) => trim($p->getFirstName().' '.$p->getLastName()),
                 'placeholder' => '—',
                 'attr' => ['class' => 'form-select'],
-            ])
+            ]);
+        }
+
+        $builder
             ->add('rating', IntegerType::class, [
                 'label' => 'Note (1 à 10)',
+                'block_prefix' => 'rating_stars',
                 'attr' => [
                     'min' => 1,
                     'max' => 10,
-                    'class' => 'form-control',
                 ],
-                'help' => 'Attribuez une note entre 1 et 10.',
+                'help' => 'Cliquez sur les étoiles pour choisir une note de 1 à 10.',
             ])
             ->add('message', TextareaType::class, [
                 'label' => 'Commentaire (optionnel)',
@@ -44,6 +47,8 @@ class RatingsType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Ratings::class,
+            'hide_player' => false,
         ]);
+        $resolver->setAllowedTypes('hide_player', 'bool');
     }
 }

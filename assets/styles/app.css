@@ -143,11 +143,10 @@ a:hover {
     flex-shrink: 0;
 }
 
-/* Backdrop menu mobile (élément du header, placé avant le bloc interne mais en Fixed) */
+/* Voile menu mobile : premier enfant de body (hors header) pour un empilement fiable face à backdrop-filter du header */
 .site-nav__backdrop {
     position: fixed;
     inset: var(--site-header-strip-h) 0 0 0;
-    z-index: 18;
     margin: 0;
     padding: 0;
     border: 0;
@@ -164,6 +163,12 @@ a:hover {
     visibility: visible;
     opacity: 1;
     pointer-events: auto;
+}
+
+@media (min-width: 901px) {
+    .site-nav__backdrop {
+        z-index: 0;
+    }
 }
 
 .site-nav__burger {
@@ -223,8 +228,15 @@ body.site-nav-no-scroll {
 }
 
 @media (max-width: 900px) {
+    /* Empilement global (backdrop et header sont frères sous body) */
+    .site-nav__backdrop {
+        z-index: 9980;
+    }
+
     .site-header {
-        z-index: 50;
+        /* Au-dessus du voile ; sans backdrop-filter sticky pour ne pas reclore les descendants fixed */
+        z-index: 10000;
+        backdrop-filter: none;
     }
 
     .site-nav__burger {
@@ -240,7 +252,6 @@ body.site-nav-no-scroll {
         overflow-y: auto;
         flex: none;
         min-width: 0;
-        z-index: 45;
         display: flex;
         flex-direction: column;
         background: rgba(21, 28, 38, 0.98);
@@ -255,10 +266,6 @@ body.site-nav-no-scroll {
 
     .site-nav__panel.site-nav--main.site-nav__panel--open {
         transform: translateX(0);
-    }
-
-    .site-nav__backdrop {
-        z-index: 40;
     }
 
     .site-nav__list {
@@ -304,6 +311,8 @@ body.site-nav-no-scroll {
     margin: auto auto 0;
     padding: 1.5rem clamp(1rem, 3vw, 1.75rem);
     border-top: 1px solid var(--border);
+    position: relative;
+    z-index: 0;
 }
 
 .site-footer__text {
@@ -319,6 +328,8 @@ body.site-nav-no-scroll {
     max-width: 1200px;
     margin-inline: auto;
     padding: 1.5rem clamp(1rem, 3vw, 1.75rem) 3rem;
+    position: relative;
+    z-index: 0;
 }
 
 .page-shell > h1:not(.home-dashboard__title) {
@@ -397,6 +408,38 @@ body.site-nav-no-scroll {
     filter: brightness(1.08);
 }
 
+/* Suppression impossible : désactivé = lisible comme grisé, pas rouge danger */
+.btn:disabled,
+.btn[disabled] {
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.btn-danger:disabled,
+.btn-danger[disabled],
+.btn-outline-danger:disabled,
+.btn-outline-danger[disabled] {
+    filter: none;
+    background: rgba(42, 51, 64, 0.85);
+    border-color: var(--border);
+    color: var(--text-muted);
+    opacity: 0.85;
+}
+
+.btn-danger:disabled:hover,
+.btn-danger[disabled]:hover,
+.btn-outline-danger:disabled:hover,
+.btn-outline-danger[disabled]:hover {
+    filter: none;
+    background: rgba(42, 51, 64, 0.85);
+    color: var(--text-muted);
+}
+
+.btn:disabled:active,
+.btn[disabled]:active {
+    transform: none;
+}
+
 .btn-outline-danger {
     background: transparent;
     border-color: rgba(255, 107, 107, 0.55);
@@ -423,6 +466,10 @@ body.site-nav-no-scroll {
 
 .text-muted {
     color: var(--text-muted);
+}
+
+.small {
+    font-size: 0.8125rem;
 }
 
 .d-inline {
@@ -495,6 +542,33 @@ body.site-nav-no-scroll {
     margin: 0 0 1.25rem;
 }
 
+.page-shell .page-toolbar form {
+    margin: 0;
+}
+
+.page-shell article .article-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.page-shell article .article-actions form {
+    margin: 0;
+}
+
+.page-shell table td .table-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.35rem 0.5rem;
+}
+
+.page-shell table td .table-actions form {
+    margin: 0;
+}
+
 .page-toolbar--back {
     margin-top: 0.25rem;
 }
@@ -518,6 +592,10 @@ body.site-nav-no-scroll {
 
 .mt-3 {
     margin-top: 1rem;
+}
+
+.mt-4 {
+    margin-top: 1.5rem;
 }
 
 /* Fiches lecture + formulaires encadrés (joueurs, équipes…) */
@@ -968,4 +1046,96 @@ body.site-nav-no-scroll {
     text-align: center;
     font-size: 0.875rem;
     color: var(--text-muted);
+}
+
+/* Messages flash */
+.site-flash {
+    max-width: 1200px;
+    margin: 0.75rem auto 0;
+    padding: 0.65rem 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    font-size: 0.9375rem;
+}
+
+.site-flash--success {
+    background: rgba(46, 160, 67, 0.18);
+    border-color: rgba(46, 160, 67, 0.45);
+    color: #b6f0c4;
+}
+
+.site-flash--danger {
+    background: var(--danger-muted);
+    border-color: var(--danger-border);
+    color: #ffc9c9;
+}
+
+.site-flash--warning {
+    background: rgba(240, 188, 61, 0.15);
+    border-color: rgba(240, 188, 61, 0.4);
+    color: #ffe6a8;
+}
+
+.site-flash--info {
+    background: var(--accent-soft);
+    border-color: rgba(61, 156, 240, 0.35);
+    color: var(--text);
+}
+
+/* Note 1–10 en étoiles (formulaire Symfony) */
+.star-rating-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.star-rating-field__stars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem;
+    align-items: center;
+}
+
+.star-rating-field__star {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.85rem;
+    height: 1.85rem;
+    padding: 0;
+    margin: 0;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    font-size: 1.35rem;
+    line-height: 1;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: color 0.12s ease, transform 0.08s ease, background 0.12s ease;
+}
+
+.star-rating-field__star:hover,
+.star-rating-field__star:focus-visible {
+    color: #f5d154;
+    outline: none;
+    background: rgba(245, 209, 84, 0.12);
+}
+
+.star-rating-field__star--filled {
+    color: #f5d154;
+    text-shadow: 0 0 12px rgba(245, 209, 84, 0.35);
+}
+
+.star-rating-field__star--preview {
+    color: #ffe48a;
+}
+
+.coach-rating-form .btn {
+    margin-top: 0.5rem;
+}
+
+.page-shell .h5 {
+    margin: 0 0 0.5rem;
+    font-size: 1.05rem;
+    font-weight: 600;
 }

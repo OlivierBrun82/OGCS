@@ -23,8 +23,14 @@
                 <td>{{ inventory.quantity }}</td>
                 <td>{{ inventory.team ? inventory.team.teamName : '—' }}</td>
                 <td>
-                    <a href="{{ path('app_inventory_show', {'id': inventory.id}) }}">Voir</a>
-                    <a href="{{ path('app_inventory_edit', {'id': inventory.id}) }}">Modifier</a>
+                    <div class="table-actions">
+                        <form method="get" action="{{ path('app_inventory_show', { id: inventory.id }) }}">
+                            <button type="submit" class="btn btn-secondary btn-sm">Voir</button>
+                        </form>
+                        <form method="get" action="{{ path('app_inventory_edit', { id: inventory.id }) }}">
+                            <button type="submit" class="btn btn-outline-secondary btn-sm">Modifier</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
         {% else %}

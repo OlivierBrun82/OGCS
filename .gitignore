@@ -24,3 +24,5 @@
 .env
 .env.dev
 .env.test
+
+.public/uploads/player-photos/*
